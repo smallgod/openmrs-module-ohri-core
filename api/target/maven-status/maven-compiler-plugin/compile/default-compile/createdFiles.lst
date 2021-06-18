@@ -1,0 +1,7 @@
+org/openmrs/module/ohricore/api/OHRICoreService.class
+org/openmrs/module/ohricore/api/impl/OHRICoreServiceImpl.class
+org/openmrs/module/ohricore/OHRICoreActivator.class
+org/openmrs/module/ohricore/OHRICoreConfig.class
+org/openmrs/module/ohricore/aop/EncounterInterceptorAdvice.class
+org/openmrs/module/ohricore/api/dao/OHRICoreDao.class
+org/openmrs/module/ohricore/Item.class

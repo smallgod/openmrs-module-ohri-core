@@ -28,15 +28,16 @@
 	<aware_of_modules>
 		<aware_of_module>org.openmrs.module.legacyui</aware_of_module>
 	</aware_of_modules>
-	
-	
-	<!-- AOP
+
 	<advice>
-		<point>org.openmrs.api.FormService</point>
-		<class>@MODULE_PACKAGE@.advice.DuplicateFormAdvisor</class>
+		<point>org.openmrs.api.EncounterService</point>
+		<class>org.openmrs.module.ohricore.aop.EncounterInterceptorAdvice</class>
 	</advice>
-	 /AOP -->
-	
+
+<!--	<advice>-->
+<!--		<point>org.openmrs.api.ObsService</point>-->
+<!--		<class>org.openmrs.module.ohricore.aop.EncounterInterceptorAdvice</class>-->
+<!--	</advice>-->
 	
 	<!-- Required Privileges 
 	<privilege>

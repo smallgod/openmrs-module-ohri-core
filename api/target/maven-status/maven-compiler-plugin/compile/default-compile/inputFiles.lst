@@ -1,0 +1,7 @@
+/Users/smallgod/srv/applications/mets/ohricore/api/src/main/java/org/openmrs/module/ohricore/api/dao/OHRICoreDao.java
+/Users/smallgod/srv/applications/mets/ohricore/api/src/main/java/org/openmrs/module/ohricore/Item.java
+/Users/smallgod/srv/applications/mets/ohricore/api/src/main/java/org/openmrs/module/ohricore/api/OHRICoreService.java
+/Users/smallgod/srv/applications/mets/ohricore/api/src/main/java/org/openmrs/module/ohricore/api/impl/OHRICoreServiceImpl.java
+/Users/smallgod/srv/applications/mets/ohricore/api/src/main/java/org/openmrs/module/ohricore/OHRICoreActivator.java
+/Users/smallgod/srv/applications/mets/ohricore/api/src/main/java/org/openmrs/module/ohricore/aop/EncounterInterceptorAdvice.java
+/Users/smallgod/srv/applications/mets/ohricore/api/src/main/java/org/openmrs/module/ohricore/OHRICoreConfig.java
