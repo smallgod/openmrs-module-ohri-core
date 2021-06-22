@@ -31,17 +31,9 @@ public class EncounterInterceptorAdvice implements AfterReturningAdvice {
                 Encounter encounter = (Encounter) object;
                 Set<Obs> obs = encounter.getObs();
 
-                System.out.println("After Saving Encounter.. [" + encounter + "]");
-
                 String string1 = "";
                 String string2 = "";
                 for (Obs observation : obs) {
-
-                    Collection<ConceptAnswer> answers = observation.getConcept().getAnswers();
-                    System.out.println("Observation name: " + observation.getConcept().getName().getName());
-                    System.out.println("Observation valT: " + observation.getValueText());
-                    System.out.println("Observation valN: " + observation.getValueNumeric());
-                    System.out.println("-----------------");
 
                     Integer conceptId = observation.getConcept().getId();
                     String value = observation.getValueText();
@@ -49,7 +41,7 @@ public class EncounterInterceptorAdvice implements AfterReturningAdvice {
                         value = String.valueOf(observation.getValueNumeric());
                     }
 
-                    if (conceptId == 18) {
+                    if (conceptId == 18) { //can pass UUIDs instead
                         string1 = value;
                     } else if (conceptId == 19) {
                         string2 = value;
@@ -63,7 +55,6 @@ public class EncounterInterceptorAdvice implements AfterReturningAdvice {
                 string3.setConcept(Context.getConceptService().getConcept(20));
                 string3.setValueText(string1 + " - " + string2);
                 Location location = Context.getLocationService().getDefaultLocation();
-                System.out.println("Location: " + location.getName());
                 string3.setLocation(location);
                 Context.getObsService().saveObs(string3, "updated by Encounter interceptor");
             }
