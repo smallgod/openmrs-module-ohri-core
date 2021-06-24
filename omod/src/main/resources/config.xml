@@ -34,6 +34,11 @@
 		<class>org.openmrs.module.ohricore.aop.EncounterInterceptorAdvice</class>
 	</advice>
 
+	<advice>
+		<point>org.openmrs.api.EncounterService</point>
+		<class>org.openmrs.module.ohricore.aop.EncounterInterceptorAdvice</class>
+	</advice>
+
 <!--	<advice>-->
 <!--		<point>org.openmrs.api.ObsService</point>-->
 <!--		<class>org.openmrs.module.ohricore.aop.EncounterInterceptorAdvice</class>-->

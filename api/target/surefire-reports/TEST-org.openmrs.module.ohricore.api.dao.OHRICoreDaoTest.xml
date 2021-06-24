@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="1" failures="0" name="org.openmrs.module.ohricore.api.dao.OHRICoreDaoTest" time="0.067" errors="0" skipped="1">
+<testsuite tests="1" failures="0" name="org.openmrs.module.ohricore.api.dao.OHRICoreDaoTest" time="0.049" errors="0" skipped="1">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="java.vm.version" value="11.0.2+9"/>
@@ -64,7 +64,7 @@
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase classname="org.openmrs.module.ohricore.api.dao.OHRICoreDaoTest" name="saveItem_shouldSaveAllPropertiesInDb" time="0.067">
+  <testcase classname="org.openmrs.module.ohricore.api.dao.OHRICoreDaoTest" name="saveItem_shouldSaveAllPropertiesInDb" time="0.049">
     <skipped message="Unignore if you want to make the Item class persistable, see also Item and liquibase.xml"/>
   </testcase>
 </testsuite>
