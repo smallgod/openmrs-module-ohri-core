@@ -6,19 +6,17 @@ import org.openmrs.Patient;
 import org.openmrs.module.ohricore.api.OHRIComputedConcept;
 
 /**
- * @author smallGod
- * date: 28/06/2021
+ * @author smallGod date: 28/06/2021
  */
 public class HIVStatusComputedConcept implements OHRIComputedConcept {
-
-
-    @Override
-    public Obs computeObs(Encounter encounter) {
-        return null;
-    }
-
-    @Override
-    public void persistObs(Obs obs) {
-
-    }
+	
+	@Override
+	public Obs computeObs(Encounter encounter) {
+		return null;
+	}
+	
+	@Override
+	public void persistObs(Obs obs) {
+		
+	}
 }
