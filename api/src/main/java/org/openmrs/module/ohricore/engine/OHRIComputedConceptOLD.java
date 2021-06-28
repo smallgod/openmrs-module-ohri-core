@@ -14,7 +14,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * @author smallGod date: 24/06/2021
  */
-public abstract class OHRIComputedConcept implements ChainProcessor {
+public abstract class OHRIComputedConceptOLD implements ChainProcessor {
 	
 	private final Log logger = LogFactory.getLog(this.getClass());
 	
@@ -32,7 +32,7 @@ public abstract class OHRIComputedConcept implements ChainProcessor {
 	
 	protected EventTrigger trigger;
 	
-	public OHRIComputedConcept() {
+	public OHRIComputedConceptOLD() {
 	}
 	
 	/**
@@ -68,7 +68,7 @@ public abstract class OHRIComputedConcept implements ChainProcessor {
 
         if (processorIndex < OHRIComputedConceptPublisher.NUM_OF_SERVICES) {
 
-            OHRIComputedConcept processor = OHRIComputedConceptPublisher.SERVICES[processorIndex];
+            OHRIComputedConceptOLD processor = OHRIComputedConceptPublisher.SERVICES[processorIndex];
 
             processor.methodReturnValue = returnValue;
             processor.methodInvoked = method;
