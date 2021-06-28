@@ -7,14 +7,13 @@ import org.openmrs.module.ohricore.api.OHRIComputedConcept;
 import java.util.List;
 
 /**
- * @author smallGod
- * date: 28/06/2021
+ * @author smallGod date: 28/06/2021
  */
 public class OHRIComputedConceptsFactory {
-
-    public static List<OHRIComputedConcept> getComputedConcepts() {
-
-        List<OHRIComputedConcept> ohriComputedConcepts = Context.getRegisteredComponents(OHRIComputedConcept.class);
-        return ohriComputedConcepts;
-    }
+	
+	public static List<OHRIComputedConcept> getComputedConcepts() {
+		
+		List<OHRIComputedConcept> ohriComputedConcepts = Context.getRegisteredComponents(OHRIComputedConcept.class);
+		return ohriComputedConcepts;
+	}
 }
