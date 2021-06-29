@@ -1,21 +1,63 @@
 package org.openmrs.module.ohricore.api;
 
-import org.openmrs.Encounter;
-import org.openmrs.Obs;
-import org.springframework.stereotype.Component;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openmrs.*;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.ohricore.ConceptUUID;
+
+import java.util.Date;
 
 /**
- * @author smallGod
+ * @author MayanjaXL, Amos, Stephen, smallGod
  * date: 28/06/2021
  */
 public interface OHRIComputedConcept {
 
-    default void computeAndPersistObs(Encounter encounter) {
-        Obs obs = computeObs(encounter);
-        persistObs(obs);
+    Log log = LogFactory.getLog(OHRIComputedConcept.class);
+
+    public Obs compute(Encounter triggeringEncounter);
+
+    public Concept getConcept();
+
+    public EncounterType getTargetEncounterType();
+
+    public default void persist(Obs obs) {
+        log.info("persisting obs: " + obs.toString());
+        Context.getObsService().saveObs(obs, "updated by Encounter interceptor");
     }
 
-    Obs computeObs(Encounter encounter);
+    public default void computeAndPersistObs(Encounter triggeringEncounter) {
+        //TODO: throw an OHRI custom exception
 
-    void persistObs(Obs obs);
+        Obs obs = compute(triggeringEncounter);
+        if (obs != null) {
+            persist(obs);
+            log.info("after persisting: " + obs.toString());
+        }
+    }
+
+    public default boolean keepHistory() {
+        return false;
+    }
+
+    public default boolean isTimeBased() {
+        return false;
+    }
+
+    default Obs createOrUpdate(Encounter triggeringEncounter, String string3Val) {
+
+        log.info("createOrUpdate called..");
+
+        Obs string3 = new Obs();
+        string3.setEncounter(triggeringEncounter);
+        string3.setObsDatetime(new Date());
+        string3.setPerson(triggeringEncounter.getPatient());
+        string3.setConcept(getConcept());
+        string3.setValueText(string3Val);
+        Location location = Context.getLocationService().getDefaultLocation();
+        string3.setLocation(location);
+
+        return string3;
+    }
 }
