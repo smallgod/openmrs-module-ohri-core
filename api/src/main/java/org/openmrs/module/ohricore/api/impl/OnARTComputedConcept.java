@@ -1,22 +1,32 @@
 package org.openmrs.module.ohricore.api.impl;
 
-import org.openmrs.Encounter;
-import org.openmrs.Obs;
-import org.openmrs.Patient;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openmrs.*;
 import org.openmrs.module.ohricore.api.OHRIComputedConcept;
+import org.springframework.stereotype.Component;
 
 /**
- * @author smallGod date: 28/06/2021
+ * @author MayanjaXL, Amos, Stephen, smallGod date: 28/06/2021
  */
+@Component
 public class OnARTComputedConcept implements OHRIComputedConcept {
 	
+	private Log log = LogFactory.getLog(this.getClass());
+	
 	@Override
-	public Obs computeObs(Encounter encounter) {
+	public Obs compute(Encounter triggeringEncounter) {
+		log.info("OnARTComputedConcept compute() called..");
 		return null;
 	}
 	
 	@Override
-	public void persistObs(Obs obs) {
-		
+	public Concept getConcept() {
+		return null;
+	}
+	
+	@Override
+	public EncounterType getTargetEncounterType() {
+		return null;
 	}
 }

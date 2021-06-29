@@ -22,12 +22,6 @@ public class OHRICoreActivator extends BaseModuleActivator {
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
-	private static final int NUM_OF_THREADS = 50; //TO-DO: Put these in props file
-	
-	private static final int STOP_DELAY = 5;
-	
-	private static final TimeUnit TIME_UNIT = TimeUnit.MINUTES;
-	
 	private TaskExecutor taskExecutor;
 	
 	/**
@@ -35,7 +29,7 @@ public class OHRICoreActivator extends BaseModuleActivator {
 	 */
 	public void started() {
 		
-		taskExecutor = TaskExecutor.getInstance().configurePool(NUM_OF_THREADS, STOP_DELAY, TIME_UNIT);
+		taskExecutor = TaskExecutor.getInstance().configurePool(10, 5, TimeUnit.MINUTES);
 		
 		log.info("Started OHRICore");
 	}
