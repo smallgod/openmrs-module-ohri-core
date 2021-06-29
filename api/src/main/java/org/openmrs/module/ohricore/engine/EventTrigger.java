@@ -1,7 +1,7 @@
 package org.openmrs.module.ohricore.engine;
 
 /**
- * @author smallGod date: 24/06/2021
+ * @author MayanjaXL, Amos, Stephen, smallGod date: 24/06/2021
  */
 public enum EventTrigger {
 	

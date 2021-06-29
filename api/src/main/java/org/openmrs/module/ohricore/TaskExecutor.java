@@ -6,7 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import java.util.concurrent.*;
 
 /**
- * @author smallGod date: 24/06/2021
+ * @author MayanjaXL, Amos, Stephen, smallGod date: 24/06/2021
  */
 public class TaskExecutor {
 	
@@ -17,6 +17,16 @@ public class TaskExecutor {
 	private TimeUnit timeUnit;
 	
 	private final Log logger = LogFactory.getLog(this.getClass());
+	
+	/**
+	 * Thread pool configuration Mutex
+	 **/
+	static final String CONFIG_MUTEX = "CONFIG_MUTEX";
+	
+	/**
+	 * Duration in minutes beyond which a task should be terminated if it hasn't completed
+	 */
+	final int TASK_TIMEOUT = 5;
 	
 	private TaskExecutor() {
 	}
@@ -43,7 +53,7 @@ public class TaskExecutor {
 	public TaskExecutor configurePool(final int numOfThreads, final int stopDelay, final TimeUnit timeUnit)
 	        throws NullPointerException, IllegalArgumentException {
 		
-		synchronized (NamedConstant.CONFIG_MUTEX) {
+		synchronized (CONFIG_MUTEX) {
 			
 			if (this.executorService == null) {
 				this.stopDelay = stopDelay;
@@ -69,7 +79,7 @@ public class TaskExecutor {
 	        InterruptedException, TimeoutException, ExecutionException {
 		
 		Future<String> future = this.executorService.submit(task);
-		return future.get(NamedConstant.TASK_TIMEOUT, TimeUnit.MINUTES);
+		return future.get(TASK_TIMEOUT, TimeUnit.MINUTES);
 	}
 	
 	/**
