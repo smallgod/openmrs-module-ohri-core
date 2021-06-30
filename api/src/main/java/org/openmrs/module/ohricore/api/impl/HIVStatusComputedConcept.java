@@ -9,7 +9,8 @@ import org.openmrs.module.ohricore.api.OHRIComputedConcept;
 import org.springframework.stereotype.Component;
 
 /**
- * @author MayanjaXL, Amos, Stephen, smallGod date: 28/06/2021
+ * @author MayanjaXL, Amos, Stephen, smallGod
+ * date: 28/06/2021
  */
 @Component("hivStatusComputedConcept")
 public class HIVStatusComputedConcept implements OHRIComputedConcept {
