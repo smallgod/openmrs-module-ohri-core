@@ -1,31 +1,11 @@
 package org.openmrs.module.ohricore.engine;
 
 /**
- * @author MayanjaXL, Amos, Stephen, smallGod date: 24/06/2021
+ * @author MayanjaXL, Amos, Stephen, smallGod date: 30/06/2021
  */
-public enum EventTrigger {
+public final class EventTrigger {
 	
-	SAVE_ENCOUNTER("saveEncounter"), UNKNOWN("UNKNOWN");
+	public static final String SAVE_ENCOUNTER = "saveEncounter";
 	
-	private final String triggerName;
-	
-	EventTrigger(String value) {
-		this.triggerName = value;
-	}
-	
-	public static EventTrigger convertToEnum(String enumValue) {
-		
-		if (enumValue != null) {
-			for (EventTrigger value : EventTrigger.values()) {
-				if (enumValue.equalsIgnoreCase(value.getValue())) {
-					return value;
-				}
-			}
-		}
-		return EventTrigger.UNKNOWN;
-	}
-	
-	public String getValue() {
-		return this.triggerName;
-	}
+	public static final String UNKNOWN = "UNKNOWN";
 }

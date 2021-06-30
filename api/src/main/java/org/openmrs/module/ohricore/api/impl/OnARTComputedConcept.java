@@ -16,7 +16,6 @@ public class OnARTComputedConcept implements OHRIComputedConcept {
 	
 	@Override
 	public Obs compute(Encounter triggeringEncounter) {
-		log.info("OnARTComputedConcept compute() called..");
 		return null;
 	}
 	
