@@ -6,7 +6,8 @@ import org.openmrs.module.ohricore.api.OHRIComputedConcept;
 import org.springframework.stereotype.Component;
 
 /**
- * @author MayanjaXL, Amos, Stephen, smallGod date: 28/06/2021
+ * @author MayanjaXL, Amos, Stephen, smallGod
+ * date: 28/06/2021
  */
 @Component
 public class OnARTComputedConcept implements OHRIComputedConcept {
