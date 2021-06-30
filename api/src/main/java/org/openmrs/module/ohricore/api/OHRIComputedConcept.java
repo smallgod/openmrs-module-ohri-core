@@ -27,7 +27,6 @@ public interface OHRIComputedConcept {
 
     public default void computeAndPersistObs(Encounter triggeringEncounter) {
         //TODO: throw an OHRI custom exception
-
         Obs obs = compute(triggeringEncounter);
         if (obs != null) {
             persist(obs);
