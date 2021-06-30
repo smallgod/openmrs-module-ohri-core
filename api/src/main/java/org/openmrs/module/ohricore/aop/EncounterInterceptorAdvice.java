@@ -28,7 +28,7 @@ public class EncounterInterceptorAdvice implements AfterReturningAdvice {
 	public void afterReturning(Object returnValue, Method methodInvoked, Object[] methodArgs, Object target)
 	        throws Throwable {
 		
-		if (methodInvoked.getName().equals(EventTrigger.SAVE_ENCOUNTER.getValue())) {
+		if (methodInvoked.getName().equals(EventTrigger.SAVE_ENCOUNTER)) {
 			for (Object arg : methodArgs) {
 				if (arg instanceof Encounter) {
 					Encounter encounter = (Encounter) arg;

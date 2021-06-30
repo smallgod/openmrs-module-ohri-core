@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.ohricore.ConceptUUID;
 
 import java.util.Date;
 
@@ -23,7 +22,6 @@ public interface OHRIComputedConcept {
     public EncounterType getTargetEncounterType();
 
     public default void persist(Obs obs) {
-        log.info("persisting obs: " + obs.toString());
         Context.getObsService().saveObs(obs, "updated by Encounter interceptor");
     }
 
@@ -33,7 +31,6 @@ public interface OHRIComputedConcept {
         Obs obs = compute(triggeringEncounter);
         if (obs != null) {
             persist(obs);
-            log.info("after persisting: " + obs.toString());
         }
     }
 
@@ -46,8 +43,6 @@ public interface OHRIComputedConcept {
     }
 
     default Obs createOrUpdate(Encounter triggeringEncounter, String string3Val) {
-
-        log.info("createOrUpdate called..");
 
         Obs string3 = new Obs();
         string3.setEncounter(triggeringEncounter);

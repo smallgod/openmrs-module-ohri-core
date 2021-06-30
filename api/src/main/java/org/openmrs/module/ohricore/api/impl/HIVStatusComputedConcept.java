@@ -4,7 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.ohricore.ConceptUUID;
+import org.openmrs.module.ohricore.engine.HIVStatusConceptUUID;
 import org.openmrs.module.ohricore.api.OHRIComputedConcept;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +18,6 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
 	
 	@Override
 	public Obs compute(Encounter triggeringEncounter) {
-		
-		log.info("HIVStatusComputedConcept compute() called");
 		return null;
 	}
 	
@@ -30,6 +28,6 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
 	
 	@Override
 	public Concept getConcept() {
-		return Context.getConceptService().getConceptByUuid(ConceptUUID.HIV_STATUS.getUUID());
+		return Context.getConceptService().getConceptByUuid(HIVStatusConceptUUID.HIV_STATUS);
 	}
 }
