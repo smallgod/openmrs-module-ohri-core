@@ -40,7 +40,7 @@ public class String3ComputedConcept implements OHRIComputedConcept {
         if (!(string1 == null || string2 == null)) {
             string3Val = string1 + " - " + string2;
         }
-        return createOrUpdate(triggeringEncounter, string3Val);//voids str3 if either str1 or str2 is Null
+        return createOrUpdate(triggeringEncounter.getPatient(), string3Val);//voids str3 if either str1 or str2 is Null
     }
 
     @Override

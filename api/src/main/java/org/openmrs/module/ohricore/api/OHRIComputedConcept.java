@@ -4,6 +4,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.ohricore.engine.CommonsUUID;
+import org.openmrs.module.ohricore.engine.String3ConceptUUID;
 
 import java.util.Date;
 
@@ -19,7 +21,15 @@ public interface OHRIComputedConcept {
 
     public Concept getConcept();
 
+    public default Concept getConcept(String UUID) {
+        return Context.getConceptService().getConceptByUuid(UUID);
+    }
+
     public EncounterType getTargetEncounterType();
+
+    public default Encounter getTargetEncounter() {
+        return Context.getEncounterService().getEncounterByUuid(CommonsUUID.COMPUTED_CONCEPT_TARGET_ENCOUNTER);
+    }
 
     public default void persist(Obs obs) {
         Context.getObsService().saveObs(obs, "updated by Encounter interceptor");
@@ -41,6 +51,20 @@ public interface OHRIComputedConcept {
         return false;
     }
 
+    default Obs createOrUpdate(Patient patient, String targetValueCodedUUID) {
+
+        Obs computedObs = new Obs(); //TODO: Check if an obs exists for the getConcept() and this patient -> update or create new
+        computedObs.setObsDatetime(new Date());
+        computedObs.setPerson(patient);
+        computedObs.setConcept(getConcept());
+        computedObs.setValueCoded(getConcept(targetValueCodedUUID));
+        Location location = Context.getLocationService().getDefaultLocation();
+        computedObs.setLocation(location);
+
+        return computedObs;
+    }
+
+    /*
     default Obs createOrUpdate(Encounter triggeringEncounter, String string3Val) {
 
         Obs string3 = new Obs();
@@ -54,4 +78,5 @@ public interface OHRIComputedConcept {
 
         return string3;
     }
+     */
 }
