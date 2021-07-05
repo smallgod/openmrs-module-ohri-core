@@ -1,4 +1,12 @@
 
+Create a thread in interceptor
+- synchronize compute function
+- run each compute on its own thread
+- (GC - stringbuilders, )
+
+consider using rfc file (request for comments)
+
+
 Have like a super class that knows how to deal with several inputs
 
 - Abstract the computed concepts into a class
