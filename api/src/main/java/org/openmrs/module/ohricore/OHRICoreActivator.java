@@ -29,7 +29,7 @@ public class OHRICoreActivator extends BaseModuleActivator {
 	 */
 	public void started() {
 		
-		taskExecutor = TaskExecutor.getInstance().configurePool(10, 5, TimeUnit.MINUTES);
+		taskExecutor = TaskExecutor.getInstance().createThreadPool(10, 5, TimeUnit.MINUTES);
 		log.info("Started OHRICore");
 	}
 	
