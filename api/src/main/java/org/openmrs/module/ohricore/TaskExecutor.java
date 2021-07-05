@@ -3,7 +3,9 @@ package org.openmrs.module.ohricore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+//import java.util.concurrent.*;
 import java.util.concurrent.*;
+
 
 /**
  * @author MayanjaXL, Amos, Stephen, smallGod date: 24/06/2021
@@ -50,7 +52,7 @@ public class TaskExecutor {
 	 * @throws NullPointerException
 	 * @throws IllegalArgumentException
 	 */
-	public TaskExecutor configurePool(final int numOfThreads, final int stopDelay, final TimeUnit timeUnit)
+	public TaskExecutor createThreadPool(final int numOfThreads, final int stopDelay, final TimeUnit timeUnit)
 	        throws NullPointerException, IllegalArgumentException {
 		
 		synchronized (CONFIG_MUTEX) {
