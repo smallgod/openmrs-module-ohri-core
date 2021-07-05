@@ -120,3 +120,5 @@ nb-configuration.xml
 ### Liquibase snapshot files ###
 liquibase/snapshots/*.xml
 #############
+
+api/src/main/java/org/openmrs/module/ohricore/scratchpad.txt
