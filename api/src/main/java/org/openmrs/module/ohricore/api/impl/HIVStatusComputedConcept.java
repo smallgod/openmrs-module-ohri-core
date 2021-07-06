@@ -26,27 +26,6 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
     @Override
     public Obs compute(Encounter triggeringEncounter) {
 
-        /*
-        Is Positive (condition 1):
-        The value of this concept should be Positive if any of the following conditions is true:
-        From HTS:
-            - The client has at least one Final HIV Test that turned positive
-
-        Is Positive (condition 2):
-        From Other programmes:
-            - The client has an ART initiation Date
-            - The client is receiving ARVs
-            - The client has a detectable viral load
-
-        Is Negative:
-        The value of this concept should be Negative if all of the following conditions are true:
-            - The client is NOT HIV positive
-            - The client has at-least one Final HIV Test that turned Negative within the last 90 days
-
-        Is Unknown:
-            - All else
-         */
-
         Concept hivTestConcept = getConcept(HIVStatusConceptUUID.FINAL_HIV_TEST_RESULT);
         Patient patient = triggeringEncounter.getPatient();
         List<Obs> hivTestObs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), hivTestConcept);
@@ -55,7 +34,9 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
 
         for (Obs obs : hivTestObs) {
 
-            if (obs.getVoided()) return null;
+            if (obs.getVoided()) {
+                continue;
+            }
 
             Concept obsValueCoded = obs.getValueCoded();
             if (obsValueCoded.getUuid().equals(CommonsUUID.POSITIVE)) {
