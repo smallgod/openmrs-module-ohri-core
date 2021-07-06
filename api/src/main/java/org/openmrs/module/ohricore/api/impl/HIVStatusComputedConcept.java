@@ -55,15 +55,15 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
 
         for (Obs obs : hivTestObs) {
 
+            if (obs.getVoided()) return null;
+
             Concept obsValueCoded = obs.getValueCoded();
             if (obsValueCoded.getUuid().equals(CommonsUUID.POSITIVE)) {
-                //Or has ART init date | Or is receiving ARVs  | Or has a detectable viral load
                 return createOrUpdate(patient, CommonsUUID.POSITIVE);
 
-            } else if (obsValueCoded.getUuid().equals(CommonsUUID.NEGATIVE)) {
-                if (valueDateIsWithin90Days(obs.getValueDate())) {
-                    isNegative = true;
-                }
+            } else if (obsValueCoded.getUuid().equals(CommonsUUID.NEGATIVE)
+                    && valueDateIsWithin90Days(obs.getValueDate())) {
+                isNegative = true;
             }
         }
         return isNegative ? createOrUpdate(patient, CommonsUUID.NEGATIVE) : createOrUpdate(patient, CommonsUUID.UNKNOWN);
