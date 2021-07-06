@@ -26,9 +26,12 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
     @Override
     public Obs compute(Encounter triggeringEncounter) {
 
-        Concept hivTestConcept = getConcept(HIVStatusConceptUUID.FINAL_HIV_TEST_RESULT);
+        Concept hivFinalTestConcept = getConcept(HIVStatusConceptUUID.FINAL_HIV_TEST_RESULT);
+        Concept hivPositiveConcept = getConcept(CommonsUUID.POSITIVE);
+        Concept hivNegativeConcept = getConcept(CommonsUUID.NEGATIVE);
+
         Patient patient = triggeringEncounter.getPatient();
-        List<Obs> hivTestObs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), hivTestConcept);
+        List<Obs> hivTestObs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), hivFinalTestConcept);
 
         boolean isNegative = false;
 
@@ -39,15 +42,15 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
             }
 
             Concept obsValueCoded = obs.getValueCoded();
-            if (obsValueCoded.getUuid().equals(CommonsUUID.POSITIVE)) {
-                return createOrUpdate(patient, CommonsUUID.POSITIVE);
+            if (obsValueCoded == hivPositiveConcept) {
+                return createOrUpdate(patient, hivPositiveConcept);
 
-            } else if (obsValueCoded.getUuid().equals(CommonsUUID.NEGATIVE)
+            } else if (obsValueCoded == hivNegativeConcept
                     && valueDateIsWithin90Days(obs.getValueDate())) {
                 isNegative = true;
             }
         }
-        return isNegative ? createOrUpdate(patient, CommonsUUID.NEGATIVE) : createOrUpdate(patient, CommonsUUID.UNKNOWN);
+        return isNegative ? createOrUpdate(patient, hivNegativeConcept) : createOrUpdate(patient, getConcept(CommonsUUID.UNKNOWN));
     }
 
     @Override

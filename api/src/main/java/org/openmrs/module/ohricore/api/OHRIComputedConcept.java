@@ -51,13 +51,13 @@ public interface OHRIComputedConcept {
         return false;
     }
 
-    default Obs createOrUpdate(Patient patient, String targetValueCodedUUID) {
+    default Obs createOrUpdate(Patient patient, Concept targetConcept) {
 
         Obs computedObs = new Obs(); //TODO: Check if an obs exists for the getConcept() and this patient -> update or create new
         computedObs.setObsDatetime(new Date());
         computedObs.setPerson(patient);
         computedObs.setConcept(getConcept());
-        computedObs.setValueCoded(getConcept(targetValueCodedUUID));
+        computedObs.setValueCoded(targetConcept);
         Location location = Context.getLocationService().getDefaultLocation();
         computedObs.setLocation(location);
 
