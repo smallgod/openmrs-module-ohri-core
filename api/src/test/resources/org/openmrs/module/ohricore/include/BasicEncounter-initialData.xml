@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+
+-->
+<dataset>
+
+    <encounter
+            encounter_id="1"
+            visit_id="1"
+            encounter_type="1"
+            form_id="1"
+            encounter_datetime="2021-07-08 11:15:00.0"
+            patient_id="1"
+            location_id="1"
+            creator="1"
+            date_created="2021-07-07 00:00:00.0"
+            voided="0"
+            uuid="430bbb70-6a9c-4e1e-badb-9d1034b1b5e9"/>
+
+    <visit
+            visit_id="1"
+            visit_type_id="1"
+            date_started="2021-07-07 00:00:00.0"
+            patient_id="1"
+            location_id="1"
+            creator="1"
+            date_created="2021-07-07 01:00:00.0"
+            voided="0"
+            uuid="7fffd6b9-0970-4967-88c7-0b7b50f12ab9"/>
+
+    <encounter_type
+            encounter_type_id="1"
+            name="Test Enc Type A"
+            description="Test encounter type - A"
+            creator="1"
+            date_created="2021-01-01 00:00:00.0"
+            retired="false"
+            uuid="4ee21921-01cc-4720-a6bf-a61a17c4d05b"/>
+
+    <form
+            form_id="1"
+            name="Basic Form"
+            version="0.1"
+            build="0"
+            published="0"
+            description="Test form"
+            creator="1"
+            date_created="2020-01-01 00:00:00.0"
+            changed_by="1"
+            date_changed="2020-10-24 14:51:53.0"
+            retired="false"
+            uuid="2a45c87e-e43d-42ff-83c7-e70a229fa99d"/>
+
+    <location
+            location_id="1"
+            name="Test Location 1"
+            creator="1"
+            date_created="2021-01-01 00:00:00.0"
+            retired="false"
+            uuid="be69741b-29e9-49a1-adc9-2a726e6610e4"/>
+
+    <encounter_provider
+            encounter_provider_id="1"
+            encounter_id="1"
+            provider_id="1"
+            encounter_role_id="1"
+            creator="1"
+            date_created="2021-07-07 15:00:35.0"
+            voided="false"
+            uuid="b566821c-1ad9-473b-836b-9e9c67688e02"/>
+
+    <provider
+            provider_id="1"
+            name="physician"
+            identifier="1"
+            creator="1"
+            date_created="2021-01-01 00:00:00.0"
+            retired="false"
+            uuid="c2299800-cca9-11e0-9572-0800200c9a66"/>
+
+    <encounter_role
+            encounter_role_id="1"
+            name="attending physician"
+            description="The person in charge"
+            creator="1"
+            date_created="2021-01-01 00:00:00.0"
+            retired="false"
+            uuid="430bbb70-6a9c-4e1e-badb-9d1054b1b5e9"/>
+
+    <global_property
+            property="visits.assignmentHandler"
+            property_value=""
+            description="Set to the name of the class responsible for assigning visits to encounters."
+            uuid="7fffd6b9-0970-4967-88c7-0b7b50f12cc6"/>
+
+    <users
+            user_id="5506"
+            person_id="501"
+            system_id="7-5"
+            username="test_user"
+            password="4a1750c8607d0fa237de36c6305715c223415189"
+            salt="c788c6ad82a157b712392ca695dfcf2eed193d7f"
+            secret_question=""
+            creator="1"
+            date_created="2008-08-15 15:57:09.0"
+            changed_by="1"
+            date_changed="2008-08-18 11:51:56.0"
+            retired="false"
+            retire_reason=""
+            uuid="06d05314-e132-11de-babe-001e37123456"/>
+
+    <person
+            person_id="1"
+            dead="false"
+            creator="1"
+            date_created="2005-01-01 00:00:00.0"
+            voided="false"
+            gender="M"
+            uuid="a194be38-271a-44cb-ba3f-f2dbf4831fe9"/>
+
+    <person_name
+            person_name_id="1"
+            person_id="1"
+            preferred="1"
+            creator="1"
+            date_created="2005-01-01 00:00:00.0"
+            voided="false"
+            given_name="John"
+            middle_name=" "
+            family_name="Doe"
+            uuid="765b882e-db79-498b-aff7-b5b53f12caf1"/>
+
+    <patient
+            patient_id="1"
+            creator="1"
+            date_created="2005-01-01 00:00:00.0"
+            voided="false"/>
+
+    <patient_identifier
+            patient_identifier_id="1"
+            patient_id="1"
+            creator="1"
+            date_created="2005-01-01 00:00:00.0"
+            identifier="1234"
+            identifier_type="1"
+            preferred="1"
+            voided="false"
+            location_id="1"
+            uuid="b2c299e7-2679-44b8-a7a3-c69159a20ac0"/>
+
+    <patient_identifier_type
+            patient_identifier_type_id="1"
+            name="Test Identifier Type"
+            description="Test identifier Description"
+            creator="1"
+            date_created="2005-01-01 00:00:00.0"
+            required="false"
+            retired="false"
+            uuid="d6b27c63-3984-4fba-b683-1b0126a8e370"/>
+
+</dataset>
