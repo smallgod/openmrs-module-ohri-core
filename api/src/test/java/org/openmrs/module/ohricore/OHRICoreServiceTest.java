@@ -1,3 +1,5 @@
+package org.openmrs.module.ohricore;
+
 /**
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
@@ -7,10 +9,10 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.ohricore.api;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -21,7 +23,6 @@ import org.openmrs.module.ohricore.api.dao.OHRICoreDao;
 import org.openmrs.module.ohricore.api.impl.OHRICoreServiceImpl;
 import static org.mockito.Mockito.*;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
 
 /**
  * This is a unit test, which verifies logic in OHRICoreService. It doesn't extend
@@ -38,13 +39,14 @@ public class OHRICoreServiceTest {
 	@Mock
 	UserService userService;
 	
-	@Before
+	@BeforeEach
 	public void setupMocks() {
 		MockitoAnnotations.initMocks(this);
 	}
 	
 	@Test
 	public void saveItem_shouldSetOwnerIfNotSet() {
+		
 		//Given
 		Item item = new Item();
 		item.setDescription("some description");
@@ -58,6 +60,6 @@ public class OHRICoreServiceTest {
 		basicModuleService.saveItem(item);
 		
 		//Then
-		assertThat(item, hasProperty("owner", is(user)));
+		MatcherAssert.assertThat(item, hasProperty("owner", is(user)));
 	}
 }
