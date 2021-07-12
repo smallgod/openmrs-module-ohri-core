@@ -40,7 +40,7 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
 			if (obs.getVoided()) {
 				continue;
 			}
-
+			
 			Concept obsValueCoded = obs.getValueCoded();
 			if (obsValueCoded == hivPositiveConcept) {
 				return createOrUpdate(patient, hivPositiveConcept);
