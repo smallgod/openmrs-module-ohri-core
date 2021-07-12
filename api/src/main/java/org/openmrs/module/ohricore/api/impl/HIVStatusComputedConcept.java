@@ -2,6 +2,11 @@ package org.openmrs.module.ohricore.api.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ohricore.api.OHRIComputedConcept;
 import org.openmrs.module.ohricore.engine.CommonsUUID;
@@ -22,25 +27,25 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
     private Log log = LogFactory.getLog(this.getClass());
 
     @Override
-    public org.openmrs.Obs compute(org.openmrs.Encounter triggeringEncounter) {
+    public Obs compute(Encounter triggeringEncounter) {
 
-        org.openmrs.Concept hivFinalTestConcept = getConcept(HIVStatusConceptUUID.FINAL_HIV_TEST_RESULT);
-        org.openmrs.Concept hivPositiveConcept = getConcept(CommonsUUID.POSITIVE);
-        org.openmrs.Concept hivNegativeConcept = getConcept(CommonsUUID.NEGATIVE);
+        Concept hivFinalTestConcept = getConcept(HIVStatusConceptUUID.FINAL_HIV_TEST_RESULT);
+        Concept hivPositiveConcept = getConcept(CommonsUUID.POSITIVE);
+        Concept hivNegativeConcept = getConcept(CommonsUUID.NEGATIVE);
 
-        org.openmrs.Patient patient = triggeringEncounter.getPatient();
-        List<org.openmrs.Obs> hivTestObs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(),
+        Patient patient = triggeringEncounter.getPatient();
+        List<Obs> hivTestObs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(),
                 hivFinalTestConcept);
 
         boolean isNegative = false;
 
-        for (org.openmrs.Obs obs : hivTestObs) {
+        for (Obs obs : hivTestObs) {
 
             if (obs.getVoided()) {
                 continue;
             }
 
-            org.openmrs.Concept obsValueCoded = obs.getValueCoded();
+            Concept obsValueCoded = obs.getValueCoded();
             if (obsValueCoded == hivPositiveConcept) {
                 return createOrUpdate(patient, hivPositiveConcept);
 
@@ -53,12 +58,12 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
     }
 
     @Override
-    public org.openmrs.EncounterType getTargetEncounterType() {
+    public EncounterType getTargetEncounterType() {
         return null;
     }
 
     @Override
-    public org.openmrs.Concept getConcept() {
+    public Concept getConcept() {
         return Context.getConceptService().getConceptByUuid(HIVStatusConceptUUID.HIV_STATUS);
     }
 
