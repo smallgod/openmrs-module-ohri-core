@@ -1,11 +1,12 @@
 package org.openmrs.module.ohricore.api.impl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openmrs.*;
+import org.openmrs.Concept;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
+import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.ohricore.engine.String3ConceptUUID;
 import org.openmrs.module.ohricore.api.OHRIComputedConcept;
+import org.openmrs.module.ohricore.engine.String3ConceptUUID;
 import org.springframework.stereotype.Component;
 
 /**
