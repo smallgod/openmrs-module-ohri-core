@@ -12,6 +12,7 @@ package org.openmrs.module.ohricore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.BaseModuleActivator;
+import org.springframework.core.task.TaskExecutor;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,14 +23,11 @@ public class OHRICoreActivator extends BaseModuleActivator {
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
-	private TaskExecutor taskExecutor;
-	
 	/**
 	 * @see #started()
 	 */
 	public void started() {
 		
-		taskExecutor = TaskExecutor.getInstance().createThreadPool(10, 5, TimeUnit.MINUTES);
 		log.info("Started OHRICore");
 	}
 	
@@ -37,8 +35,6 @@ public class OHRICoreActivator extends BaseModuleActivator {
 	 * @see #shutdown()
 	 */
 	public void shutdown() {
-		this.taskExecutor.shutdownPool();
 		log.info("Shutdown OHRICore");
 	}
-	
 }
