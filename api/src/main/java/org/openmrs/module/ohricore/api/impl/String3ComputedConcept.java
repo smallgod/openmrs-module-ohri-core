@@ -42,7 +42,8 @@ public class String3ComputedConcept implements OHRIComputedConcept {
 		}
 		//TODO: uncomment when corrected
 		//return createOrUpdate(triggeringEncounter.getPatient(), string3Val);//voids str3 if either str1 or str2 is Null
-		return createOrUpdate(triggeringEncounter.getPatient(), null);
+		//return createOrUpdate(triggeringEncounter.getPatient(), null);
+		return null;
 	}
 	
 	@Override

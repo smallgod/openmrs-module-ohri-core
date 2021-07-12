@@ -13,6 +13,8 @@ import org.openmrs.module.ohricore.engine.CommonsUUID;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 
 /**
  * @author MayanjaXL, Amos, Stephen, smallGod

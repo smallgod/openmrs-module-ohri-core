@@ -13,6 +13,9 @@ import org.openmrs.module.ohricore.engine.CommonsUUID;
 import org.openmrs.module.ohricore.engine.HIVStatusConceptUUID;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -66,10 +69,9 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
 	
 	boolean valueDateIsWithin90Days(Date valueDate) {
 		
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(valueDate);
-		cal.add(Calendar.DATE, -90);
-		
-		return valueDate.compareTo(cal.getTime()) > 0; //valueDate occurs after (90days ago)
+		LocalDateTime date90DaysAgo = LocalDateTime.now().minusDays(90);
+		LocalDateTime obsValueDate = LocalDateTime.ofInstant(valueDate.toInstant(), ZoneId.systemDefault());
+
+		return obsValueDate.isAfter(date90DaysAgo);
 	}
 }
