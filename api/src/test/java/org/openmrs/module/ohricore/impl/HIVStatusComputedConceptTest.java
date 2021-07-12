@@ -1,5 +1,6 @@
 package org.openmrs.module.ohricore.impl;
 
+import org.junit.BeforeClass;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openmrs.Concept;
@@ -19,33 +20,17 @@ import java.util.List;
  */
 public class HIVStatusComputedConceptTest extends BaseContextSensitiveTest {
 	
-	protected static final String OBS_ATLEAST_ONE_POSITIVE_DATA_XML = "org/openmrs/module/ohricore/include/HIVComputedConcept-AtleastOnePositiveObs.xml";
-	
-	protected static final String OBS_ALL_VOIDED_DATA_XML = "org/openmrs/module/ohricore/include/BasicEncounter-initialData.xml";
-	
-	protected static final String OBS_ONE_NEGATIVE_BEYOND_90_DAYS_DATA_XML = "org/openmrs/module/ohricore/include/BasicEncounter-initialData.xml";
-	
-	protected static final String OBS_ONE_NEGATIVE_IN_90_DAYS_NO_POSITIVE_DATA_XML = "org/openmrs/module/ohricore/include/BasicEncounter-initialData.xml";
-	
-	protected static final String OBS_ONE_NEGATIVE_IN_90_DAYS_PLUS_POSITIVE_DATA_XML = "org/openmrs/module/ohricore/include/BasicEncounter-initialData.xml";
-	
-	protected static final String OBS_ONE_NEGATIVE_BEYOND_90_DAYS_PLUS_POSITIVE_DATA_XML = "org/openmrs/module/ohricore/include/BasicEncounter-initialData.xml";
-	
-	protected static final String OBS_ONE_NEGATIVE_IN_90_DAYS_PLUS_MULTIPLE_NEGATIVE_BEYOND_90_DAYS_DATA_XML = "org/openmrs/module/ohricore/include/BasicEncounter-initialData.xml";
-	
-	protected static final String OBS_NO_OBS_DATA_XML = "org/openmrs/module/ohricore/include/BasicEncounter-initialData.xml";
-	
 	@Resource
 	private HIVStatusComputedConcept computedConcept;
 	
-	//@BeforeAll
+	@BeforeClass
 	void setUp() {
 	}
 	
 	@Test
 	void compute_withAtleastOnePositiveShouldSetPositiveHIVConcept() {
 		
-		executeDataSet(OBS_ATLEAST_ONE_POSITIVE_DATA_XML); //TODO: cleanup the asserts, retain only one per method
+		//executeDataSet(OBS_ATLEAST_ONE_POSITIVE_DATA_XML); //TODO: cleanup the asserts, retain only one per method
 		
 		Concept hivStatus = Context.getConceptService().getConceptByUuid(HIVStatusConceptUUID.HIV_STATUS);
 		Assertions.assertNotNull(hivStatus, "Computed HIV status Concept should exist");
@@ -70,36 +55,36 @@ public class HIVStatusComputedConceptTest extends BaseContextSensitiveTest {
 	
 	@Test
 	void compute_withAllVoidedShouldSetUnknownConcept() {
-		executeDataSet(OBS_ALL_VOIDED_DATA_XML);
+		//executeDataSet(OBS_ALL_VOIDED_DATA_XML);
 	}
 	
 	@Test
 	void compute_withOneNegativeBeyond90DaysShouldSetUnkownConcept() {
-		executeDataSet(OBS_ONE_NEGATIVE_BEYOND_90_DAYS_DATA_XML);
+		//executeDataSet(OBS_ONE_NEGATIVE_BEYOND_90_DAYS_DATA_XML);
 	}
 	
 	@Test
 	void compute_withOneNegativeIn90DaysNoPositiveShouldSetNegativeHIV() {
-		executeDataSet(OBS_ONE_NEGATIVE_IN_90_DAYS_NO_POSITIVE_DATA_XML);
+		//executeDataSet(OBS_ONE_NEGATIVE_IN_90_DAYS_NO_POSITIVE_DATA_XML);
 	}
 	
 	@Test
 	void compute_withOneNegativeIn90DaysPlusPositiveShouldSetPositiveHIV() {
-		executeDataSet(OBS_ONE_NEGATIVE_IN_90_DAYS_PLUS_POSITIVE_DATA_XML);
+		//executeDataSet(OBS_ONE_NEGATIVE_IN_90_DAYS_PLUS_POSITIVE_DATA_XML);
 	}
 	
 	@Test
 	void compute_withOneNegativeBeyond90DaysPlusPositiveShouldSetPositiveHIV() {
-		executeDataSet(OBS_ONE_NEGATIVE_BEYOND_90_DAYS_PLUS_POSITIVE_DATA_XML);
+		//executeDataSet(OBS_ONE_NEGATIVE_BEYOND_90_DAYS_PLUS_POSITIVE_DATA_XML);
 	}
 	
 	@Test
 	void compute_withOneNegativeIn90DaysPlusMultipleNegativeBeyond90DaysShouldSetNegativeHIV() {
-		executeDataSet(OBS_ONE_NEGATIVE_IN_90_DAYS_PLUS_MULTIPLE_NEGATIVE_BEYOND_90_DAYS_DATA_XML);
+		//executeDataSet(OBS_ONE_NEGATIVE_IN_90_DAYS_PLUS_MULTIPLE_NEGATIVE_BEYOND_90_DAYS_DATA_XML);
 	}
 	
 	@Test
 	void compute_withNoObservationShouldSetUnknown() {
-		executeDataSet(OBS_NO_OBS_DATA_XML);
+		//executeDataSet(OBS_NO_OBS_DATA_XML);
 	}
 }

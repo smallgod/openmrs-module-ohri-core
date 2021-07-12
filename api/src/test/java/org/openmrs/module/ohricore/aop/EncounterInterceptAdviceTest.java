@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.api.EncounterService;
 import org.openmrs.module.ohricore.engine.ConceptComputeTrigger;
+import org.openmrs.test.jupiter.BaseContextSensitiveTest;
 import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,9 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EncounterInterceptAdviceTest extends BaseModuleContextSensitiveTest {
 	
-	protected static final String ENCOUNTER_DATA_XML = "org/openmrs/module/ohricore/include/BasicEncounter-initialData.xml";
-	
-	protected static final String CONCEPTS_DATA_XML = "org/openmrs/module/ohricore/include/HIVComputedConcept-initConceptData.xml";
+	protected static final String OHRI_XML_TEST_DATASET_PATH = "org/openmrs/module/ohricore/include/OHRI-StandardDataset.xml";
 	
 	protected static final String TEST_ENCOUNTER_UUID = "430bbb70-6a9c-4e1e-badb-9d1034b1b5e9";
 	
@@ -33,8 +32,7 @@ public class EncounterInterceptAdviceTest extends BaseModuleContextSensitiveTest
 	@Before
 	public void setUpEncounter() throws ClassNotFoundException, NoSuchMethodException {
 		
-		executeDataSet(ENCOUNTER_DATA_XML);
-		executeDataSet(CONCEPTS_DATA_XML);
+		executeDataSet(OHRI_XML_TEST_DATASET_PATH);
 		
 		Class clazz = Class.forName("org.openmrs.api.impl.EncounterServiceImpl");
 		methodInvoked = clazz.getDeclaredMethod(ConceptComputeTrigger.SAVE_ENCOUNTER, Encounter.class);

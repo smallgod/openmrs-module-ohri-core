@@ -22,7 +22,7 @@ import java.util.List;
  */
 @Component("hivStatusComputedConcept")
 public class HIVStatusComputedConcept implements OHRIComputedConcept {
-
+	
 	@Override
 	public Obs compute(Encounter triggeringEncounter) {
 		
