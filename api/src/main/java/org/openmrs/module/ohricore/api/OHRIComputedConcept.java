@@ -2,7 +2,6 @@ package org.openmrs.module.ohricore.api;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ohricore.engine.CommonsUUID;
 
@@ -17,27 +16,27 @@ public interface OHRIComputedConcept {
 
     Log log = LogFactory.getLog(OHRIComputedConcept.class);
 
-    public Obs compute(Encounter triggeringEncounter);
+    public org.openmrs.Obs compute(org.openmrs.Encounter triggeringEncounter);
 
-    public Concept getConcept();
+    public org.openmrs.Concept getConcept();
 
-    public default Concept getConcept(String UUID) {
+    public default org.openmrs.Concept getConcept(String UUID) {
         return Context.getConceptService().getConceptByUuid(UUID);
     }
 
-    public EncounterType getTargetEncounterType();
+    public org.openmrs.EncounterType getTargetEncounterType();
 
-    public default Encounter getTargetEncounter() {
+    public default org.openmrs.Encounter getTargetEncounter() {
         return Context.getEncounterService().getEncounterByUuid(CommonsUUID.COMPUTED_CONCEPT_TARGET_ENCOUNTER);
     }
 
-    public default void persist(Obs obs) {
+    public default void persist(org.openmrs.Obs obs) {
         Context.getObsService().saveObs(obs, "updated by Encounter interceptor");
     }
 
-    public default void computeAndPersistObs(Encounter triggeringEncounter) {
+    public default void computeAndPersistObs(org.openmrs.Encounter triggeringEncounter) {
         //TODO: throw an OHRI custom exception
-        Obs obs = compute(triggeringEncounter);
+        org.openmrs.Obs obs = compute(triggeringEncounter);
         if (obs != null) {
             persist(obs);
         }
@@ -51,21 +50,21 @@ public interface OHRIComputedConcept {
         return false;
     }
 
-    default Obs createOrUpdate(Patient patient, Concept targetConcept) {
+    default org.openmrs.Obs createOrUpdate(org.openmrs.Patient patient, org.openmrs.Concept targetConcept) {
 
         //TODO: Check if an obs exists for the getConcept() and this patient -> update or create new
-        Obs computedObs = new Obs();
+        org.openmrs.Obs computedObs = new org.openmrs.Obs();
         computedObs.setObsDatetime(new Date());
         computedObs.setPerson(patient);
         computedObs.setConcept(getConcept());
         computedObs.setValueCoded(targetConcept);
-        Location location = Context.getLocationService().getDefaultLocation();
+        org.openmrs.Location location = Context.getLocationService().getDefaultLocation();
         computedObs.setLocation(location);
 
         return computedObs;
     }
 
-    default List<Obs> getObs(Patient patient, Concept obsConcept) {
+    default List<org.openmrs.Obs> getObs(org.openmrs.Patient patient, org.openmrs.Concept obsConcept) {
 
         return Context.getObsService()
                 .getObservationsByPersonAndConcept(patient.getPerson(), obsConcept);

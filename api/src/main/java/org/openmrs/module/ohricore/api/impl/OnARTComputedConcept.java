@@ -2,7 +2,6 @@ package org.openmrs.module.ohricore.api.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.*;
 import org.openmrs.module.ohricore.api.OHRIComputedConcept;
 import org.springframework.stereotype.Component;
 
@@ -15,17 +14,17 @@ public class OnARTComputedConcept implements OHRIComputedConcept {
 	private Log log = LogFactory.getLog(this.getClass());
 	
 	@Override
-	public Obs compute(Encounter triggeringEncounter) {
+	public org.openmrs.Obs compute(org.openmrs.Encounter triggeringEncounter) {
 		return null;
 	}
 	
 	@Override
-	public Concept getConcept() {
+	public org.openmrs.Concept getConcept() {
 		return null;
 	}
 	
 	@Override
-	public EncounterType getTargetEncounterType() {
+	public org.openmrs.EncounterType getTargetEncounterType() {
 		return null;
 	}
 }
