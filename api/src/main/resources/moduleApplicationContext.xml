@@ -25,6 +25,49 @@
 
     <context:component-scan base-package="org.openmrs.module.ohricore"/>
 
+
+
+    <!--  **************************  SERVICE CONTEXT CONFIGURATION  *************************  -->
+    <!-- Services accessible via Context.getService() -->
+    <bean id="encounterService"
+          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.EncounterServiceImpl">
+                <property name="dao">
+                    <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateEncounterDAO">
+                        <property name="sessionFactory">
+                            <ref bean="sessionFactory" />
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list merge="true">
+                <value>${project.parent.groupId}.${project.parent.artifactId}.api.EncounterService</value>
+                <ref local="encounterService"/>
+            </list>
+        </property>
+    </bean>
+
+
+
+
+
+
+
     <!-- Wraps OHRICoreService methods in DB transactions and OpenMRS interceptors,
     which set audit info like dateCreated, changedBy, etc.-->
     <bean id="ohricore.OHRICoreService"

@@ -10,8 +10,9 @@
 
 package org.openmrs.module.ohricore.dao;
 
+import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ohricore.Item;
@@ -38,7 +39,7 @@ public class OHRICoreDaoTest extends BaseModuleContextSensitiveTest {
 	UserService userService;
 	
 	@Test
-	@Disabled("Disabled if you want to make the Item class persistable, see also Item and liquibase.xml")
+	//@Ignore("Disabled if you want to make the Item class persistable, see also Item and liquibase.xml")
 	public void saveItem_shouldSaveAllPropertiesInDb() {
 		
 		//Given
