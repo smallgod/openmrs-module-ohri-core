@@ -2,7 +2,6 @@ package org.openmrs.module.ohricore.engine;
 
 import org.openmrs.Encounter;
 import org.openmrs.api.context.Context;
-import org.openmrs.customdatatype.CustomDatatype;
 import org.openmrs.module.ohricore.api.OHRIComputedConcept;
 
 import java.util.List;
