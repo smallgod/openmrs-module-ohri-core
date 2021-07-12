@@ -11,5 +11,5 @@ public final class CommonsUUID {
 	
 	public static final String NEGATIVE = "664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	
-	public static final String UNKNOWN = "1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+	public static final String UNKNOWN = "1138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 }
