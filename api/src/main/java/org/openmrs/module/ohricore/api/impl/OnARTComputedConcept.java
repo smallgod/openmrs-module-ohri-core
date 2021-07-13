@@ -10,9 +10,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class OnARTComputedConcept implements OHRIComputedConcept {
-	
-	private Log log = LogFactory.getLog(this.getClass());
-	
+
 	@Override
 	public org.openmrs.Obs compute(org.openmrs.Encounter triggeringEncounter) {
 		return null;

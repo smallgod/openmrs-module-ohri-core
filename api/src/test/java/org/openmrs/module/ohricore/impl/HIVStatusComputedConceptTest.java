@@ -39,6 +39,14 @@ public class HIVStatusComputedConceptTest extends BaseModuleContextSensitiveTest
 
     protected static final String OHRI_HIV_STATUS_NO_FINAL_HIV_TEST_RESULT_XML_TEST_DATASET_PATH = "org/openmrs/module/ohricore/include/OHRI-NoFinalHIVTestObsDataset.xml";
 
+    protected static final String OHRI_HIV_STATUS_ALL_OBS_VOIDED_XML_TEST_DATASET_PATH = "org/openmrs/module/ohricore/include/OHRI-AllVoidedObsDataset.xml";
+
+    protected static final String OHRI_HIV_STATUS_ONE_POSITIVE_AND_ONE_VOIDED_OBS_XML_TEST_DATASET_PATH = "org/openmrs/module/ohricore/include/OHRI-OnePositiveOneVoidedObsDataset.xml";
+
+    protected static final String OHRI_HIV_STATUS_ONE_NEGATIVE_IN_90DAYS_AND_ONE_POSITIVE_VOIDED_OBS_XML_TEST_DATASET_PATH = "org/openmrs/module/ohricore/include/OHRI-OneNegativeIn90DaysOnePositiveVoidedObsDataset.xml";
+
+    protected static final String OHRI_HIV_STATUS_ONE_NEGATIVE_IN_90DAYS_AND_ONE_UNKNOWN_OBS_XML_TEST_DATASET_PATH = "org/openmrs/module/ohricore/include/OHRI-OneNegativeIn90DaysOneUnknownObsDataset.xml";
+
     @Resource
     private HIVStatusComputedConcept computedConcept;
 
@@ -63,7 +71,7 @@ public class HIVStatusComputedConceptTest extends BaseModuleContextSensitiveTest
     }
 
     @Test
-    public void compute_withAtleastOnePositiveHIVObsShouldBePositive() throws Throwable {
+    public void compute_withOnePositiveObsShouldSetPositive() throws Throwable {
 
         executeDataSet(OHRI_HIV_STATUS_ATLEAST_ONE_POSITIVE_XML_TEST_DATASET_PATH);
 
@@ -73,7 +81,7 @@ public class HIVStatusComputedConceptTest extends BaseModuleContextSensitiveTest
     }
 
     @Test
-    public void compute_withOneNegativeBeyond90DaysShouldSetUnkownConcept() throws Throwable {
+    public void compute_withOneNegativeObsBeyond90DaysShouldSetUnknown() throws Throwable {
 
         executeDataSet(OHRI_HIV_STATUS_ATLEAST_ONE_NEGATIVE_BEYOND_90DAYS_XML_TEST_DATASET_PATH);
 
@@ -83,7 +91,7 @@ public class HIVStatusComputedConceptTest extends BaseModuleContextSensitiveTest
     }
 
     @Test
-    public void compute_withOneNegativeIn90DaysNoPositiveShouldSetNegativeHIV() throws Throwable {
+    public void compute_withOneNegativeObsIn90DaysNoPositiveShouldSetNegative() throws Throwable {
 
         executeDataSet(OHRI_HIV_STATUS_ATLEAST_ONE_NEGATIVE_WITHIN_90DAYS_XML_TEST_DATASET_PATH);
 
@@ -93,7 +101,7 @@ public class HIVStatusComputedConceptTest extends BaseModuleContextSensitiveTest
     }
 
     @Test
-    public void compute_withOneNegativeIn90DaysPlusPositiveShouldSetPositiveHIV() throws Throwable {
+    public void compute_withOneNegativeObsIn90DaysPlusPositiveShouldSetPositive() throws Throwable {
 
         executeDataSet(OHRI_HIV_STATUS_ONE_NEGATIVE_WITHIN_90DAYS_PLUS_POSITIVE_XML_TEST_DATASET_PATH);
 
@@ -103,7 +111,7 @@ public class HIVStatusComputedConceptTest extends BaseModuleContextSensitiveTest
     }
 
     @Test
-    public void compute_withOneNegativeIn90DaysPlusMultipleNegativeBeyond90DaysShouldSetNegativeHIV() throws Throwable {
+    public void compute_withOneNegativeObsIn90DaysPlusMultipleNegativeBeyond90DaysShouldSetNegative() throws Throwable {
 
         executeDataSet(OHRI_HIV_STATUS_ATLEAST_ONE_NEGATIVE_WITHIN_90DAYS_XML_TEST_DATASET_PATH);
 
@@ -123,21 +131,46 @@ public class HIVStatusComputedConceptTest extends BaseModuleContextSensitiveTest
     }
 
     @Test
-    public void compute_withAllVoidedShouldSetUnknownConcept() {
-        //executeDataSet(OBS_ALL_VOIDED_DATA_XML);
+    public void compute_withAllVoidedObsShouldSetUnknown() throws Throwable {
+
+        executeDataSet(OHRI_HIV_STATUS_ALL_OBS_VOIDED_XML_TEST_DATASET_PATH);
+
+        List<Obs> hivTestObs = computeComputedConceptHelper();
+
+        Assertions.assertEquals(computedConcept.getConcept(CommonsUUID.UNKNOWN), hivTestObs.get(0).getValueCoded());
     }
 
     @Test
-    public void compute_withPositiveObsVoidedShouldSetUnknownConcept() {
-        //executeDataSet(OBS_ALL_VOIDED_DATA_XML);
+    public void compute_withOnePositiveAndOneVoidedObsShouldSetPositive() throws Throwable {
+
+        executeDataSet(OHRI_HIV_STATUS_ONE_POSITIVE_AND_ONE_VOIDED_OBS_XML_TEST_DATASET_PATH);
+
+        List<Obs> hivTestObs = computeComputedConceptHelper();
+
+        Assertions.assertEquals(computedConcept.getConcept(CommonsUUID.POSITIVE), hivTestObs.get(0).getValueCoded());
     }
 
     @Test
-    public void compute_withNegativeObsIn90DaysVoidedShouldSetUnknownConcept() {
-        //executeDataSet(OBS_ALL_VOIDED_DATA_XML);
+    public void compute_withOneNegativeObsIn90DaysAndOneVoidedShouldSetNegative() throws Throwable {
+
+        executeDataSet(OHRI_HIV_STATUS_ONE_NEGATIVE_IN_90DAYS_AND_ONE_POSITIVE_VOIDED_OBS_XML_TEST_DATASET_PATH);
+
+        List<Obs> hivTestObs = computeComputedConceptHelper();
+
+        Assertions.assertEquals(computedConcept.getConcept(CommonsUUID.NEGATIVE), hivTestObs.get(0).getValueCoded());
     }
 
-    List<Obs> computeComputedConceptHelper() throws Throwable {
+    @Test
+    public void compute_withOneNegativeObsIn90DaysAndOneUnknownSetNegative() throws Throwable {
+
+        executeDataSet(OHRI_HIV_STATUS_ONE_NEGATIVE_IN_90DAYS_AND_ONE_UNKNOWN_OBS_XML_TEST_DATASET_PATH);
+
+        List<Obs> hivTestObs = computeComputedConceptHelper();
+
+        Assertions.assertEquals(computedConcept.getConcept(CommonsUUID.NEGATIVE), hivTestObs.get(0).getValueCoded());
+    }
+
+    private List<Obs> computeComputedConceptHelper() throws Throwable {
 
         Encounter encounter = encounterService.getEncounter(100);
         new EncounterInterceptorAdvice().afterReturning(null, methodInvoked, new Object[]{encounter}, null);
