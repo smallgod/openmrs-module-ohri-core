@@ -1,7 +1,5 @@
 package org.openmrs.module.ohricore.api.impl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
@@ -13,15 +11,14 @@ import org.openmrs.module.ohricore.engine.CommonsUUID;
 import org.openmrs.module.ohricore.engine.HIVStatusConceptUUID;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 /**
- * @author MayanjaXL, Amos, Stephen, smallGod date: 28/06/2021
+ * @author MayanjaXL, Amos, Stephen, smallGod
+ * date: 28/06/2021
  */
 @Component("hivStatusComputedConcept")
 public class HIVStatusComputedConcept implements OHRIComputedConcept {
@@ -67,11 +64,10 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
 		return Context.getConceptService().getConceptByUuid(HIVStatusConceptUUID.HIV_STATUS);
 	}
 	
-	boolean valueDateIsWithin90Days(Date valueDate) {
+	private boolean valueDateIsWithin90Days(Date valueDate) {
 		
 		LocalDateTime date90DaysAgo = LocalDateTime.now().minusDays(90);
 		LocalDateTime obsValueDate = LocalDateTime.ofInstant(valueDate.toInstant(), ZoneId.systemDefault());
-
 		return obsValueDate.isAfter(date90DaysAgo);
 	}
 }

@@ -13,16 +13,12 @@ import org.openmrs.module.ohricore.engine.CommonsUUID;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Random;
 
 /**
  * @author MayanjaXL, Amos, Stephen, smallGod
  * date: 28/06/2021
  */
 public interface OHRIComputedConcept {
-
-    Log log = LogFactory.getLog(OHRIComputedConcept.class);
 
     public Obs compute(Encounter triggeringEncounter);
 
