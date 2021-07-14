@@ -6,5 +6,4 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
  * @author MayanjaXL, Amos, Stephen, smallGod date: 18/06/2021
  */
 
-public class EncounterInterceptAdviceTest extends BaseModuleContextSensitiveTest {
-}
+public class EncounterInterceptAdviceTest extends BaseModuleContextSensitiveTest {}
