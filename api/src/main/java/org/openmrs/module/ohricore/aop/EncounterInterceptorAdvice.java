@@ -13,11 +13,11 @@ import java.util.List;
  * @author MayanjaXL, Amos, Stephen, smallGod date: 16/06/2021
  */
 public class EncounterInterceptorAdvice implements AfterReturningAdvice {
-
+	
 	@Override
 	public void afterReturning(Object returnValue, Method methodInvoked, Object[] methodArgs, Object target)
 	        throws Throwable {
-
+		
 		if (methodInvoked.getName().equals(ConceptComputeTrigger.SAVE_ENCOUNTER)) {
 			for (Object arg : methodArgs) {
 				if (arg instanceof Encounter) {
