@@ -170,7 +170,7 @@ public class HIVStatusComputedConceptTest extends BaseModuleContextSensitiveTest
 	
 	private List<Obs> computeComputedConceptHelper() throws Throwable {
 		
-		Encounter encounter = encounterService.getEncounter(100);
+		Encounter encounter = encounterService.getEncounter(100);//Test encounter ID
 		new EncounterInterceptorAdvice().afterReturning(null, methodInvoked, new Object[] { encounter }, null);
 		
 		Concept hivStatus = conceptService.getConceptByUuid(HIVStatusConceptUUID.HIV_STATUS);
