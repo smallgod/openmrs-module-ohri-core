@@ -13,8 +13,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.BaseModuleActivator;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * This class contains the logic that is run every time this module is either started or shutdown
  */
@@ -22,14 +20,11 @@ public class OHRICoreActivator extends BaseModuleActivator {
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
-	private TaskExecutor taskExecutor;
-	
 	/**
 	 * @see #started()
 	 */
 	public void started() {
 		
-		taskExecutor = TaskExecutor.getInstance().createThreadPool(10, 5, TimeUnit.MINUTES);
 		log.info("Started OHRICore");
 	}
 	
@@ -37,8 +32,6 @@ public class OHRICoreActivator extends BaseModuleActivator {
 	 * @see #shutdown()
 	 */
 	public void shutdown() {
-		this.taskExecutor.shutdownPool();
 		log.info("Shutdown OHRICore");
 	}
-	
 }

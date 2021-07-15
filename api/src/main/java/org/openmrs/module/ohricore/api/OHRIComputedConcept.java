@@ -1,21 +1,22 @@
 package org.openmrs.module.ohricore.api;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openmrs.*;
+import org.openmrs.Concept;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
+import org.openmrs.Location;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ohricore.engine.CommonsUUID;
-import org.openmrs.module.ohricore.engine.String3ConceptUUID;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author MayanjaXL, Amos, Stephen, smallGod
  * date: 28/06/2021
  */
 public interface OHRIComputedConcept {
-
-    Log log = LogFactory.getLog(OHRIComputedConcept.class);
 
     public Obs compute(Encounter triggeringEncounter);
 
@@ -53,7 +54,8 @@ public interface OHRIComputedConcept {
 
     default Obs createOrUpdate(Patient patient, Concept targetConcept) {
 
-        Obs computedObs = new Obs(); //TODO: Check if an obs exists for the getConcept() and this patient -> update or create new
+        //TODO: Check if an obs exists for the getConcept() and this patient -> update or create new
+        Obs computedObs = new Obs();
         computedObs.setObsDatetime(new Date());
         computedObs.setPerson(patient);
         computedObs.setConcept(getConcept());
@@ -64,19 +66,9 @@ public interface OHRIComputedConcept {
         return computedObs;
     }
 
-    /* TODO: For future re-use
-    default Obs createOrUpdate(Encounter triggeringEncounter, String string3Val) {
+    default List<Obs> getObs(Patient patient, Concept obsConcept) {
 
-        Obs string3 = new Obs();
-        string3.setEncounter(triggeringEncounter);
-        string3.setObsDatetime(new Date());
-        string3.setPerson(triggeringEncounter.getPatient());
-        string3.setConcept(getConcept());
-        string3.setValueText(string3Val);
-        Location location = Context.getLocationService().getDefaultLocation();
-        string3.setLocation(location);
-
-        return string3;
+        return Context.getObsService()
+                .getObservationsByPersonAndConcept(patient.getPerson(), obsConcept);
     }
-     */
 }

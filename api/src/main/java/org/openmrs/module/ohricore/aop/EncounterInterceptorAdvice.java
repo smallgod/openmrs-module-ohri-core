@@ -5,8 +5,6 @@ import org.openmrs.module.ohricore.api.OHRIComputedConcept;
 import org.openmrs.module.ohricore.engine.ConceptComputeTrigger;
 import org.openmrs.module.ohricore.engine.OHRIComputedConceptsFactory;
 import org.springframework.aop.AfterReturningAdvice;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -16,14 +14,6 @@ import java.util.List;
  */
 public class EncounterInterceptorAdvice implements AfterReturningAdvice {
 	
-	@Autowired
-	@Qualifier("string3ComputedConcept")
-	OHRIComputedConcept string3ComputedConcept;
-	
-	@Autowired
-	@Qualifier("hivStatusComputedConcept")
-	OHRIComputedConcept hivStatusComputedConcept;
-	
 	@Override
 	public void afterReturning(Object returnValue, Method methodInvoked, Object[] methodArgs, Object target)
 	        throws Throwable {
@@ -32,7 +22,6 @@ public class EncounterInterceptorAdvice implements AfterReturningAdvice {
 			for (Object arg : methodArgs) {
 				if (arg instanceof Encounter) {
 					Encounter encounter = (Encounter) arg;
-					//string3ComputedConcept.computeAndPersistObs(encounter);
 					List<OHRIComputedConcept> ohriComputedConcepts = OHRIComputedConceptsFactory
 					        .getComputedConcepts(encounter);
 					for (OHRIComputedConcept computedConcept : ohriComputedConcepts) {
