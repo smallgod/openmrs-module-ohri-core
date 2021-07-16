@@ -52,7 +52,7 @@ public interface OHRIComputedConcept {
         return false;
     }
 
-    default Obs createOrUpdate(Patient patient, Concept targetConcept) {
+    default Obs createOrUpdateObs(Patient patient, Concept targetConcept) {
 
         //TODO: Check if an obs exists for the getConcept() and this patient -> update or create new
         Obs computedObs = new Obs();

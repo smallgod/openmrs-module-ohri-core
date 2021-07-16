@@ -64,8 +64,8 @@ public class HIVStatusComputedConceptTest extends BaseModuleContextSensitiveTest
 		
 		executeDataSet(OHRI_INIT_XML_TEST_DATASET_PATH);
 		
-		Class clazz = Class.forName("org.openmrs.api.impl.EncounterServiceImpl");
-		methodInvoked = clazz.getDeclaredMethod(ConceptComputeTrigger.SAVE_ENCOUNTER, Encounter.class);
+		Class encounterServiceImplClass = Class.forName("org.openmrs.api.impl.EncounterServiceImpl");
+		methodInvoked = encounterServiceImplClass.getDeclaredMethod(ConceptComputeTrigger.SAVE_ENCOUNTER, Encounter.class);
 	}
 	
 	@Test
