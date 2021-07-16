@@ -34,7 +34,6 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
 		    hivFinalTestConcept);
 		
 		boolean isNegative = false;
-		
 		for (Obs obs : hivTestObs) {
 			
 			if (obs.getVoided()) {
@@ -43,13 +42,13 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
 			
 			Concept obsValueCoded = obs.getValueCoded();
 			if (obsValueCoded == hivPositiveConcept) {
-				return createOrUpdate(patient, hivPositiveConcept);
+				return createOrUpdateObs(patient, hivPositiveConcept);
 				
 			} else if (obsValueCoded == hivNegativeConcept && valueDateIsWithin90Days(obs.getValueDate())) {
 				isNegative = true;
 			}
 		}
-		return isNegative ? createOrUpdate(patient, hivNegativeConcept) : createOrUpdate(patient,
+		return isNegative ? createOrUpdateObs(patient, hivNegativeConcept) : createOrUpdateObs(patient,
 		    getConcept(CommonsUUID.UNKNOWN));
 	}
 	
