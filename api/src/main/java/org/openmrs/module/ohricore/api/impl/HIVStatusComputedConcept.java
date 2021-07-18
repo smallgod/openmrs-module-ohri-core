@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * @author MayanjaXL, Amos, Stephen, smallGod date: 28/06/2021
@@ -26,31 +28,30 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
 	public Obs compute(Encounter triggeringEncounter) {
 		
 		Concept hivFinalTestConcept = getConcept(HIVStatusConceptUUID.FINAL_HIV_TEST_RESULT);
-		Concept hivPositiveConcept = getConcept(CommonsUUID.POSITIVE);
-		Concept hivNegativeConcept = getConcept(CommonsUUID.NEGATIVE);
 		
 		Patient patient = triggeringEncounter.getPatient();
 		List<Obs> hivTestObs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(),
 		    hivFinalTestConcept);
 		
-		boolean isNegative = false;
-		for (Obs obs : hivTestObs) {
-			
-			if (obs.getVoided()) {
-				continue;
-			}
-			
-			Concept obsValueCoded = obs.getValueCoded();
-			if (obsValueCoded == hivPositiveConcept) {
-				return createOrUpdateObs(patient, hivPositiveConcept);
-				
-			} else if (obsValueCoded == hivNegativeConcept && valueDateIsWithin90Days(obs.getValueDate())) {
-				isNegative = true;
-			}
-		}
-		return isNegative ? createOrUpdateObs(patient, hivNegativeConcept) : createOrUpdateObs(patient,
-		    getConcept(CommonsUUID.UNKNOWN));
+		Concept hivStatus = computeHivStatusConcept(hivTestObs);
+		return createOrUpdateObs(patient, hivStatus);
 	}
+	
+	private Concept computeHivStatusConcept(List<Obs> hivTestObs) {
+
+        Supplier<Stream<Obs>> hivTestObsStream  = hivTestObs::stream;
+        return hivTestObsStream.get()
+                .filter(obs -> obs.getValueCoded() == getConcept(CommonsUUID.POSITIVE))
+                .findAny()
+                .map(Obs::getValueCoded)
+                .orElse(hivTestObsStream.get()
+                        .filter(obs -> obs.getValueCoded() == getConcept(CommonsUUID.NEGATIVE))
+                        .filter(obs -> valueDateIsWithin90Days(obs.getValueDate()))
+                        .findAny()
+                        .map(Obs::getValueCoded)
+                        .orElse(getConcept(CommonsUUID.UNKNOWN))
+                );
+    }
 	
 	@Override
 	public EncounterType getTargetEncounterType() {
