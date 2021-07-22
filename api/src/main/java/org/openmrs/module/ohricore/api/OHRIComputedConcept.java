@@ -26,12 +26,6 @@ public interface OHRIComputedConcept {
         return Context.getConceptService().getConceptByUuid(UUID);
     }
 
-    public EncounterType getTargetEncounterType();
-
-    public default Encounter getTargetEncounter() {
-        return Context.getEncounterService().getEncounterByUuid(CommonsUUID.COMPUTED_CONCEPT_TARGET_ENCOUNTER);
-    }
-
     public default void persist(Obs obs) {
         Context.getObsService().saveObs(obs, "updated by Encounter interceptor");
     }
@@ -55,6 +49,7 @@ public interface OHRIComputedConcept {
     default Obs createOrUpdateObs(Patient patient, Concept targetConcept) {
 
         //TODO: Check if an obs exists for the getConcept() and this patient -> update or create new
+
         Obs computedObs = new Obs();
         computedObs.setObsDatetime(new Date());
         computedObs.setPerson(patient);

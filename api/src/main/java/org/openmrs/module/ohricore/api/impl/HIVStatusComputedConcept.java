@@ -2,7 +2,6 @@ package org.openmrs.module.ohricore.api.impl;
 
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
-import org.openmrs.EncounterType;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
@@ -11,9 +10,9 @@ import org.openmrs.module.ohricore.engine.CommonsUUID;
 import org.openmrs.module.ohricore.engine.HIVStatusConceptUUID;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
+import static org.openmrs.module.ohricore.engine.ComputedConceptUtil.valueDateWithinPeriod;
+
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -39,14 +38,14 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
 	
 	private Concept computeHivStatusConcept(List<Obs> hivTestObs) {
 
-        Supplier<Stream<Obs>> hivTestObsStream  = hivTestObs::stream;
+        Supplier<Stream<Obs>> hivTestObsStream = hivTestObs::stream;
         return hivTestObsStream.get()
                 .filter(obs -> obs.getValueCoded() == getConcept(CommonsUUID.POSITIVE))
                 .findAny()
                 .map(Obs::getValueCoded)
                 .orElse(hivTestObsStream.get()
                         .filter(obs -> obs.getValueCoded() == getConcept(CommonsUUID.NEGATIVE))
-                        .filter(obs -> valueDateIsWithin90Days(obs.getValueDate()))
+                        .filter(obs -> valueDateWithinPeriod(obs.getValueDate(), ChronoUnit.DAYS, -90))
                         .findAny()
                         .map(Obs::getValueCoded)
                         .orElse(getConcept(CommonsUUID.UNKNOWN))
@@ -54,19 +53,7 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
     }
 	
 	@Override
-	public EncounterType getTargetEncounterType() {
-		return null;
-	}
-	
-	@Override
 	public Concept getConcept() {
 		return Context.getConceptService().getConceptByUuid(HIVStatusConceptUUID.HIV_STATUS);
-	}
-	
-	private boolean valueDateIsWithin90Days(Date valueDate) {
-		
-		LocalDateTime date90DaysAgo = LocalDateTime.now().minusDays(90);
-		LocalDateTime obsValueDate = LocalDateTime.ofInstant(valueDate.toInstant(), ZoneId.systemDefault());
-		return obsValueDate.isAfter(date90DaysAgo);
 	}
 }
