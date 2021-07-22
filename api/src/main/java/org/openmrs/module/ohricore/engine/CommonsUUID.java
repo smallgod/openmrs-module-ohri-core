@@ -5,8 +5,6 @@ package org.openmrs.module.ohricore.engine;
  */
 public final class CommonsUUID {
 	
-	public static final String COMPUTED_CONCEPT_TARGET_ENCOUNTER = "UUID";
-	
 	public static final String POSITIVE = "6378487b-584d-4422-a6a6-56c8830873ff";
 	
 	public static final String NEGATIVE = "664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
