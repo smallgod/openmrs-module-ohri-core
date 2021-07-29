@@ -21,6 +21,9 @@
     <!-- SG: Final HIV Test Result Concept -->
     <concept concept_id="942" retired="false" datatype_id="2" class_id="7" is_set="false" creator="1" date_created="2008-08-18 12:34:26.0" version="" changed_by="1" date_changed="2008-08-18 12:34:58.0" uuid="e16b0068-b6a2-46b7-aba9-e3be00a7b4ab"/>
 
+    <!-- SG: Final HIV Test Result Date Concept -->
+    <concept concept_id="943" retired="false" datatype_id="8" class_id="7" is_set="false" creator="1" date_created="2008-08-18 12:34:26.0" version="" changed_by="1" date_changed="2008-08-18 12:34:58.0" uuid="140414BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"/>
+
     <!-- SG: HIV Status Concept -->
     <concept concept_id="994" retired="false" datatype_id="2" class_id="7" is_set="false" creator="1" date_created="2008-08-18 12:34:26.0" version="" changed_by="1" date_changed="2008-08-18 12:34:58.0" uuid="a5261998-c635-4e27-870c-e837faf6cf9a"/>
 
@@ -46,11 +49,17 @@
     <!--SG: Final HIV Test Result Concept description-->
     <concept_description concept_description_id="23" concept_id="942" description="Final HIV Test Result - description" locale="en_GB" creator="1" date_created="2004-08-12 00:00:00.0" uuid="4g4d710b-d333-40b7-b449-6e0e739d15d0"/>
 
+    <!--SG: Final HIV Test Result Date Concept description-->
+    <concept_description concept_description_id="943" concept_id="943" description="Date" locale="en_GB" creator="1" date_created="2008-08-15 13:52:53.0" uuid="be3321b3-c1c7-4239-aaca-1b60db12e1dg"/>
+
     <!--SG: HIV Status Concept description-->
     <concept_description concept_description_id="37" concept_id="994" description="HIV Status - description" locale="en_GB" creator="1" date_created="2004-08-12 00:00:00.0" uuid="4g4d710b-d333-40b7-b449-6e0e739d15d1"/>
 
     <!-- SG: Final HIV Test Result Concept Name -->
     <concept_name concept_id="942" name="Final HIV Test Result" locale="en_GB" creator="1" date_created="2008-08-18 12:34:26.0" concept_name_id="2470" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="325391a8-db12-4e24-863f-5d66f7a4d713"/>
+
+    <!-- SG: Final HIV Test Result Date Concept Name -->
+    <concept_name concept_id="943" name="Final HIV Test Result Date" locale="en_GB" creator="1" date_created="2008-08-18 12:34:26.0" concept_name_id="3471" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="240414BBBBBBBBBBBBBBBBBBBBBBBBBBBBBC"/>
 
     <!-- SG: HIV Status Concept Name -->
     <concept_name concept_id="994" name="HIV Status" locale="en_GB" creator="1" date_created="2008-08-18 12:34:26.0" concept_name_id="3470" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="325391a8-db12-4e24-863f-5d66f7a4d714"/>
