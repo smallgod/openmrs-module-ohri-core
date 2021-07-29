@@ -10,7 +10,7 @@ import org.openmrs.module.ohricore.engine.CommonsUUID;
 import org.openmrs.module.ohricore.engine.HIVStatusConceptUUID;
 import org.springframework.stereotype.Component;
 
-import static org.openmrs.module.ohricore.engine.ComputedConceptUtil.valueDateWithinPeriod;
+import static org.openmrs.module.ohricore.engine.ComputedConceptUtil.dateWithinPeriodFromNow;
 
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -32,7 +32,13 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
 		List<Obs> hivTestObs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(),
 		    hivFinalTestConcept);
 		
-		Concept hivStatus = computeHivStatusConcept(hivTestObs);
+		Concept hivStatus = getConcept(CommonsUUID.UNKNOWN);
+		try {
+			hivStatus = computeHivStatusConcept(hivTestObs);
+		}
+		catch (Exception e) {
+			System.err.println("An un-expected Error occurred computing for computed concept");
+		}
 		return createOrUpdateObs(patient, hivStatus);
 	}
 	
@@ -45,7 +51,7 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
                 .map(Obs::getValueCoded)
                 .orElse(hivTestObsStream.get()
                         .filter(obs -> obs.getValueCoded() == getConcept(CommonsUUID.NEGATIVE))
-                        .filter(obs -> valueDateWithinPeriod(obs.getValueDate(), ChronoUnit.DAYS, -90))
+                        .filter(obs -> dateWithinPeriodFromNow(obs.getValueDate(), ChronoUnit.DAYS, -90))
                         .findAny()
                         .map(Obs::getValueCoded)
                         .orElse(getConcept(CommonsUUID.UNKNOWN))
