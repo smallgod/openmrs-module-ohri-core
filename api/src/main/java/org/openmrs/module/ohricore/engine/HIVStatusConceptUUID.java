@@ -9,5 +9,5 @@ public final class HIVStatusConceptUUID {
 	
 	public static final String FINAL_HIV_TEST_RESULT = "e16b0068-b6a2-46b7-aba9-e3be00a7b4ab";
 	
-	public static final String HIV_TEST_RESULT_DATE = "140414BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
+	public static final String HIV_TEST_RESULT_DATE = "164400AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 }
