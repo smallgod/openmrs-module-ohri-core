@@ -44,7 +44,9 @@ public class HIVStatusComputedConceptTest extends BaseModuleContextSensitiveTest
 	protected static final String OHRI_HIV_STATUS_ONE_NEGATIVE_IN_90DAYS_AND_ONE_POSITIVE_VOIDED_OBS_XML_TEST_DATASET_PATH = "org/openmrs/module/ohricore/include/OHRI-OneNegativeIn90DaysOnePositiveVoidedObsDataset.xml";
 	
 	protected static final String OHRI_HIV_STATUS_ONE_NEGATIVE_IN_90DAYS_AND_ONE_UNKNOWN_OBS_XML_TEST_DATASET_PATH = "org/openmrs/module/ohricore/include/OHRI-OneNegativeIn90DaysOneUnknownObsDataset.xml";
-	
+
+	protected static final String OHRI_HIV_STATUS_EXISTING_POSITIVE_STATUS_XML_TEST_DATASET_PATH = "org/openmrs/module/ohricore/include/OHRI-ExistingComputedPositiveStatusObsDataset.xml";
+
 	@Autowired
 	private HIVStatusComputedConcept computedConcept;
 	
@@ -166,6 +168,28 @@ public class HIVStatusComputedConceptTest extends BaseModuleContextSensitiveTest
 		List<Obs> hivTestObs = computeComputedConceptHelper();
 		
 		Assert.assertEquals(computedConcept.getConcept(CommonsUUID.NEGATIVE), hivTestObs.get(0).getValueCoded());
+	}
+
+	@Test
+	public void compute_withNegativeIn90DaysAndExistingComputedPositiveShouldSetPositive() throws Throwable {
+
+		executeDataSet(OHRI_HIV_STATUS_EXISTING_POSITIVE_STATUS_XML_TEST_DATASET_PATH);
+		executeDataSet(OHRI_HIV_STATUS_ATLEAST_ONE_NEGATIVE_WITHIN_90DAYS_XML_TEST_DATASET_PATH);
+
+		List<Obs> hivTestObs = computeComputedConceptHelper();
+
+		Assert.assertEquals(computedConcept.getConcept(CommonsUUID.POSITIVE), hivTestObs.get(0).getValueCoded());
+	}
+
+	@Test
+	public void compute_withNewPositiveAndExistingComputedPositiveShouldNotRecompute() throws Throwable {
+
+		executeDataSet(OHRI_HIV_STATUS_EXISTING_POSITIVE_STATUS_XML_TEST_DATASET_PATH);
+		executeDataSet(OHRI_HIV_STATUS_ATLEAST_ONE_POSITIVE_XML_TEST_DATASET_PATH);
+
+		List<Obs> hivTestObs = computeComputedConceptHelper();
+
+		Assert.assertEquals(180, hivTestObs.get(0).getId().intValue());//180 - obs id for the existing computed +ve
 	}
 	
 	private List<Obs> computeComputedConceptHelper() throws Throwable {
