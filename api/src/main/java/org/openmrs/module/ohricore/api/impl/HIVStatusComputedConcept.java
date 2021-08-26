@@ -15,26 +15,32 @@ import static org.openmrs.module.ohricore.engine.ComputedConceptUtil.dateWithinP
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
- * @author MayanjaXL, Amos, Stephen, smallGod
- * date: 28/06/2021
+ * @author MayanjaXL, Amos, Stephen, smallGod date: 28/06/2021
  */
 @Component("hivStatusComputedConcept")
 public class HIVStatusComputedConcept implements OHRIComputedConcept {
 	
 	@Override
 	public Obs compute(Encounter triggeringEncounter) {
-		
-		Concept hivFinalTestConcept = getConcept(HIVStatusConceptUUID.FINAL_HIV_TEST_RESULT);
-		
+
 		Patient patient = triggeringEncounter.getPatient();
+
+		Optional<Obs> priorComputedHivPositiveStatusObs = getPositiveComputedHivStatus(patient);
+		if(priorComputedHivPositiveStatusObs.isPresent()){
+			return priorComputedHivPositiveStatusObs.get();
+		}
+
+		Concept hivFinalTestConcept = getConcept(HIVStatusConceptUUID.FINAL_HIV_TEST_RESULT);
 		List<Obs> hivTestObs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(),
 		    hivFinalTestConcept);
 		
 		Concept hivStatus = computeHivStatusConcept(hivTestObs, getHIVFinalTestResultDate(patient));
+
 		return createOrUpdateObs(patient, hivStatus);
 	}
 	
@@ -67,6 +73,18 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
                 .map(Obs::getValueDate)
                 .orElse(null);
     }
+
+	public Optional<Obs> getPositiveComputedHivStatus(Patient patient){
+
+		List<Obs> computedHivObs = Context.getObsService()
+				.getObservationsByPersonAndConcept(patient.getPerson(), getConcept());
+
+		Supplier<Stream<Obs>> hivTestObsStream = computedHivObs::stream;
+
+		return hivTestObsStream.get()
+				.filter(obs -> obs.getValueCoded() == getConcept(CommonsUUID.POSITIVE))
+				.findFirst();
+	}
 	
 	@Override
 	public Concept getConcept() {
