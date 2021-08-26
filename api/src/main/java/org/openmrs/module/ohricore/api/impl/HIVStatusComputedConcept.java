@@ -19,9 +19,8 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
- * @author MayanjaXL, Amos, Stephen, smallGod date: 28/06/2021
- *         <p>
- *         create HIV test date concept, check for it: 140414BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+ * @author MayanjaXL, Amos, Stephen, smallGod
+ * date: 28/06/2021
  */
 @Component("hivStatusComputedConcept")
 public class HIVStatusComputedConcept implements OHRIComputedConcept {
