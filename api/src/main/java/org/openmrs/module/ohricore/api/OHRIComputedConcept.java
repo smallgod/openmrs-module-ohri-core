@@ -6,11 +6,20 @@ import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ohricore.engine.CommonsUUID;
+import org.openmrs.module.ohricore.engine.HIVStatusConceptUUID;
 
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
+import static org.openmrs.module.ohricore.engine.ComputedConceptUtil.dateWithinPeriodFromNow;
 
 /**
  * @author MayanjaXL, Amos, Stephen, smallGod
@@ -46,11 +55,10 @@ public interface OHRIComputedConcept {
         return false;
     }
 
-    default Obs createOrUpdateObs(Patient patient, Concept targetConcept) {
-
-        //TODO: Check if an obs exists for the getConcept() and this patient -> update or create new
+    default Obs initialiseAnObs(Patient patient, Concept targetConcept) {
 
         Obs computedObs = new Obs();
+        computedObs.getDateCreated();
         computedObs.setObsDatetime(new Date());
         computedObs.setPerson(patient);
         computedObs.setConcept(getConcept());
@@ -61,9 +69,21 @@ public interface OHRIComputedConcept {
         return computedObs;
     }
 
+    default Obs getSavedComputedObs(Patient patient) {
+
+        List<Obs> computedObsList = getObs(patient, getConcept());
+
+        if (computedObsList == null || computedObsList.isEmpty()) {
+            return null;
+        }
+        return Collections.max(computedObsList, Comparator.comparing(Obs::getDateCreated));
+    }
+
     default List<Obs> getObs(Patient patient, Concept obsConcept) {
 
         return Context.getObsService()
                 .getObservationsByPersonAndConcept(patient.getPerson(), obsConcept);
     }
+
+    Obs compareObs(Obs savedComputedObs, Obs newComputedObs);
 }
