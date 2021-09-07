@@ -10,16 +10,14 @@ import org.openmrs.module.ohricore.engine.CommonsUUID;
 import org.openmrs.module.ohricore.engine.HIVStatusConceptUUID;
 import org.springframework.stereotype.Component;
 
-import static org.openmrs.module.ohricore.engine.ComputedConceptUtil.dateWithinPeriodFromNow;
-
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import static org.openmrs.module.ohricore.engine.ComputedConceptUtil.dateWithinPeriodFromNow;
 
 /**
  * @author MayanjaXL, Amos, Stephen, smallGod date: 28/06/2021
@@ -53,7 +51,8 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
     @Override
     public Obs compareObs(Obs savedComputedObs, Obs newComputedObs) {
 
-        if (savedComputedObs.getValueCoded() == newComputedObs.getValueCoded()) {
+        if (savedComputedObs.getValueCoded() == newComputedObs.getValueCoded()
+                || savedComputedObs.getValueCoded().equals(getConcept(CommonsUUID.POSITIVE))) {
             return null;
         }
 
