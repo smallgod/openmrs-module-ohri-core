@@ -51,7 +51,7 @@ public class String3ComputedConcept implements OHRIComputedConcept {
 	}
 	
 	@Override
-	public Obs compareObs(Obs savedComputedObs, Obs newComputedObs) {
+	public Obs compareSavedComputedObs(Obs savedComputedObs, Obs newComputedObs) {
 		return null;
 	}
 }

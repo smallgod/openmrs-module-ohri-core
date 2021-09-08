@@ -29,7 +29,7 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
 	public Obs compute(Encounter triggeringEncounter) {
 		
 		Patient patient = triggeringEncounter.getPatient();
-
+		
 		Concept hivFinalTestConcept = getConcept(HIVStatusConceptUUID.FINAL_HIV_TEST_RESULT);
 		List<Obs> hivTestObs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(),
 		    hivFinalTestConcept);
@@ -38,12 +38,16 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
 		
 		Obs savedComputedObs = getSavedComputedObs(patient);
 		Obs newComputedObs = initialiseAnObs(patient, newComputedConcept);
-
-		return compareObs(savedComputedObs, newComputedObs);
+		
+		return compareSavedComputedObs(savedComputedObs, newComputedObs);
 	}
 	
 	@Override
-	public Obs compareObs(Obs savedComputedObs, Obs newComputedObs) {
+	public Obs compareSavedComputedObs(Obs savedComputedObs, Obs newComputedObs) {
+		
+		if (savedComputedObs == null) {
+			return newComputedObs;
+		}
 		
 		if (savedComputedObs.getValueCoded() == newComputedObs.getValueCoded()
 		        || savedComputedObs.getValueCoded().equals(getConcept(CommonsUUID.POSITIVE))) {
