@@ -2,24 +2,15 @@ package org.openmrs.module.ohricore.api;
 
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
-import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
-import org.openmrs.User;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.ohricore.engine.CommonsUUID;
-import org.openmrs.module.ohricore.engine.HIVStatusConceptUUID;
 
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-
-import static org.openmrs.module.ohricore.engine.ComputedConceptUtil.dateWithinPeriodFromNow;
 
 /**
  * @author MayanjaXL, Amos, Stephen, smallGod
