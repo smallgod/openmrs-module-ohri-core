@@ -76,5 +76,5 @@ public interface OHRIComputedConcept {
                 .getObservationsByPersonAndConcept(patient.getPerson(), obsConcept);
     }
 
-    Obs compareObs(Obs savedComputedObs, Obs newComputedObs);
+    Obs compareSavedComputedObs(Obs savedComputedObs, Obs newComputedObs);
 }
