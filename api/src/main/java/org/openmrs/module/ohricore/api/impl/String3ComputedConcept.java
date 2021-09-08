@@ -49,4 +49,9 @@ public class String3ComputedConcept implements OHRIComputedConcept {
 	public Concept getConcept() {
 		return Context.getConceptService().getConceptByUuid(String3ConceptUUID.STRING3);
 	}
+	
+	@Override
+	public Obs compareObs(Obs savedComputedObs, Obs newComputedObs) {
+		return null;
+	}
 }
