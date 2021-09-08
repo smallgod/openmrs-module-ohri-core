@@ -1,5 +1,6 @@
 package org.openmrs.module.ohricore.api.impl;
 
+import org.openmrs.Obs;
 import org.openmrs.module.ohricore.api.OHRIComputedConcept;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,11 @@ public class OnARTComputedConcept implements OHRIComputedConcept {
 	
 	@Override
 	public org.openmrs.Concept getConcept() {
+		return null;
+	}
+	
+	@Override
+	public Obs compareObs(Obs savedComputedObs, Obs newComputedObs) {
 		return null;
 	}
 }
