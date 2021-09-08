@@ -29,12 +29,7 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
 	public Obs compute(Encounter triggeringEncounter) {
 		
 		Patient patient = triggeringEncounter.getPatient();
-		
-		//		Optional<Obs> priorComputedHivPositiveStatusObs = getPositiveComputedHivStatus(patient);
-		//		if (priorComputedHivPositiveStatusObs.isPresent()) {
-		//			return priorComputedHivPositiveStatusObs.get();
-		//		}
-		
+
 		Concept hivFinalTestConcept = getConcept(HIVStatusConceptUUID.FINAL_HIV_TEST_RESULT);
 		List<Obs> hivTestObs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(),
 		    hivFinalTestConcept);
