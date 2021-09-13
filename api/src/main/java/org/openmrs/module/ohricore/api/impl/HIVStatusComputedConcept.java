@@ -35,9 +35,9 @@ public class HIVStatusComputedConcept implements OHRIComputedConcept {
 		    hivFinalTestConcept);
 		
 		Concept newComputedConcept = computeHivStatusConcept(hivTestObs, getHIVFinalTestResultDate(patient));
-		
-		Obs savedComputedObs = getSavedComputedObs(patient);
+
 		Obs newComputedObs = initialiseAnObs(patient, newComputedConcept);
+		Obs savedComputedObs = getSavedComputedObs(patient);
 		
 		return compareSavedComputedObs(savedComputedObs, newComputedObs);
 	}
