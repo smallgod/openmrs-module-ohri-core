@@ -77,6 +77,13 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>reporting-api</artifactId>
+            <version>${reportingVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -129,6 +136,7 @@
         <legacyUIomodVersion>1.8.2</legacyUIomodVersion>
         <junit5Version>5.7.2</junit5Version>
         <junit4Version>4.13.1</junit4Version>
+        <reportingVersion>1.19.0</reportingVersion>
     </properties>
 
 </project>
