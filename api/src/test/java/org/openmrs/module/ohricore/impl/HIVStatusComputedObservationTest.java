@@ -10,9 +10,9 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
 import org.openmrs.module.ohricore.aop.EncounterInterceptorAdvice;
-import org.openmrs.module.ohricore.api.impl.HIVStatusComputedConcept;
+import org.openmrs.module.ohricore.api.impl.HIVStatusComputedObservation;
 import org.openmrs.module.ohricore.engine.CommonsUUID;
-import org.openmrs.module.ohricore.engine.ConceptComputeTrigger;
+import org.openmrs.module.ohricore.engine.ObservationComputeTrigger;
 import org.openmrs.module.ohricore.engine.HIVStatusConceptUUID;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * @author MayanjaXL, Amos, Stephen, smallGod date: 07/07/2021
  */
-public class HIVStatusComputedConceptTest extends BaseModuleContextSensitiveTest {
+public class HIVStatusComputedObservationTest extends BaseModuleContextSensitiveTest {
 	
 	protected static final String OHRI_INIT_XML_TEST_DATASET_PATH = "org/openmrs/module/ohricore/include/OHRI-StandardDataset.xml";
 	
@@ -48,7 +48,7 @@ public class HIVStatusComputedConceptTest extends BaseModuleContextSensitiveTest
 	protected static final String OHRI_HIV_STATUS_EXISTING_POSITIVE_STATUS_XML_TEST_DATASET_PATH = "org/openmrs/module/ohricore/include/OHRI-ExistingComputedPositiveStatusObsDataset.xml";
 	
 	@Autowired
-	private HIVStatusComputedConcept computedConcept;
+	private HIVStatusComputedObservation computedConcept;
 	
 	@Autowired
 	private EncounterService encounterService;
@@ -67,7 +67,8 @@ public class HIVStatusComputedConceptTest extends BaseModuleContextSensitiveTest
 		executeDataSet(OHRI_INIT_XML_TEST_DATASET_PATH);
 		
 		Class encounterServiceImplClass = Class.forName("org.openmrs.api.impl.EncounterServiceImpl");
-		methodInvoked = encounterServiceImplClass.getDeclaredMethod(ConceptComputeTrigger.SAVE_ENCOUNTER, Encounter.class);
+		methodInvoked = encounterServiceImplClass.getDeclaredMethod(ObservationComputeTrigger.SAVE_ENCOUNTER,
+		    Encounter.class);
 	}
 	
 	@Test

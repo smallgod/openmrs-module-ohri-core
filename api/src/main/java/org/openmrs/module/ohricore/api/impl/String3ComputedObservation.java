@@ -2,10 +2,9 @@ package org.openmrs.module.ohricore.api.impl;
 
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
-import org.openmrs.EncounterType;
 import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.ohricore.api.OHRIComputedConcept;
+import org.openmrs.module.ohricore.api.OHRIComputedObservation;
 import org.openmrs.module.ohricore.engine.String3ConceptUUID;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component("string3ComputedConcept")
-public class String3ComputedConcept implements OHRIComputedConcept {
+public class String3ComputedObservation implements OHRIComputedObservation {
 	
 	@Override
 	public Obs compute(Encounter triggeringEncounter) {

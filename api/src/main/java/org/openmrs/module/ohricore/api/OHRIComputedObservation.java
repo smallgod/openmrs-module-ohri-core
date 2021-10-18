@@ -16,7 +16,7 @@ import java.util.List;
  * @author MayanjaXL, Amos, Stephen, smallGod
  * date: 28/06/2021
  */
-public interface OHRIComputedConcept {
+public interface OHRIComputedObservation {
 
     public Obs compute(Encounter triggeringEncounter);
 

@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * @author MayanjaXL, Amos, Stephen, smallGod date: 21/07/2021
  */
-public final class ComputedConceptUtil {
+public final class ComputedObservationUtil {
 	
 	/**
 	 * Check if a given date falls within a given period/duration from Now

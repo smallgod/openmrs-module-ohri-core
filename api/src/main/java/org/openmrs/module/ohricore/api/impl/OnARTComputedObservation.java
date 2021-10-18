@@ -1,14 +1,14 @@
 package org.openmrs.module.ohricore.api.impl;
 
 import org.openmrs.Obs;
-import org.openmrs.module.ohricore.api.OHRIComputedConcept;
+import org.openmrs.module.ohricore.api.OHRIComputedObservation;
 import org.springframework.stereotype.Component;
 
 /**
  * @author MayanjaXL, Amos, Stephen, smallGod date: 28/06/2021
  */
 @Component
-public class OnARTComputedConcept implements OHRIComputedConcept {
+public class OnARTComputedObservation implements OHRIComputedObservation {
 	
 	@Override
 	public org.openmrs.Obs compute(org.openmrs.Encounter triggeringEncounter) {

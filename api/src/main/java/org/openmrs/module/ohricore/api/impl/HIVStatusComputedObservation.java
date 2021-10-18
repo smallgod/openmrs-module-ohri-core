@@ -5,7 +5,7 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.ohricore.api.OHRIComputedConcept;
+import org.openmrs.module.ohricore.api.OHRIComputedObservation;
 import org.openmrs.module.ohricore.engine.CommonsUUID;
 import org.openmrs.module.ohricore.engine.HIVStatusConceptUUID;
 import org.springframework.stereotype.Component;
@@ -17,13 +17,13 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static org.openmrs.module.ohricore.engine.ComputedConceptUtil.dateWithinPeriodFromNow;
+import static org.openmrs.module.ohricore.engine.ComputedObservationUtil.dateWithinPeriodFromNow;
 
 /**
  * @author MayanjaXL, Amos, Stephen, smallGod date: 28/06/2021
  */
 @Component("hivStatusComputedConcept")
-public class HIVStatusComputedConcept implements OHRIComputedConcept {
+public class HIVStatusComputedObservation implements OHRIComputedObservation {
 	
 	@Override
 	public Obs compute(Encounter triggeringEncounter) {
