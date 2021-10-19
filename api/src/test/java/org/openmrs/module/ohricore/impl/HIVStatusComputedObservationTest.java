@@ -88,7 +88,7 @@ public class HIVStatusComputedObservationTest extends BaseModuleContextSensitive
 		
 		List<Obs> hivTestObs = computeComputedConceptHelper();
 		
-		Assert.assertEquals(computedConcept.getConcept(CommonsUUID.UNKNOWN), hivTestObs.get(0).getValueCoded());
+		Assert.assertEquals(computedConcept.getConcept(CommonsUUID.INDETERMINATE), hivTestObs.get(0).getValueCoded());
 	}
 	
 	@Test
@@ -128,7 +128,7 @@ public class HIVStatusComputedObservationTest extends BaseModuleContextSensitive
 		
 		List<Obs> hivTestObs = computeComputedConceptHelper();
 		
-		Assert.assertEquals(computedConcept.getConcept(CommonsUUID.UNKNOWN), hivTestObs.get(0).getValueCoded());
+		Assert.assertEquals(computedConcept.getConcept(CommonsUUID.INDETERMINATE), hivTestObs.get(0).getValueCoded());
 	}
 	
 	@Test
@@ -138,7 +138,7 @@ public class HIVStatusComputedObservationTest extends BaseModuleContextSensitive
 		
 		List<Obs> hivTestObs = computeComputedConceptHelper();
 		
-		Assert.assertEquals(computedConcept.getConcept(CommonsUUID.UNKNOWN), hivTestObs.get(0).getValueCoded());
+		Assert.assertEquals(computedConcept.getConcept(CommonsUUID.INDETERMINATE), hivTestObs.get(0).getValueCoded());
 	}
 	
 	@Test
