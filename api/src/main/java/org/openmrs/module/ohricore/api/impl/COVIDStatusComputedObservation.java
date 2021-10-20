@@ -13,12 +13,18 @@ import org.springframework.stereotype.Component;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static org.openmrs.module.ohricore.engine.COVIDStatusConceptUUID.ACTIVE_COVID;
+import static org.openmrs.module.ohricore.engine.COVIDStatusConceptUUID.EVER_HAD_COVID;
+import static org.openmrs.module.ohricore.engine.COVIDStatusConceptUUID.FINAL_COVID_TEST_RESULT;
+import static org.openmrs.module.ohricore.engine.COVIDStatusConceptUUID.FINAL_COVID_TEST_RESULT_DATE;
+import static org.openmrs.module.ohricore.engine.COVIDStatusConceptUUID.LONG_COVID;
+import static org.openmrs.module.ohricore.engine.CommonsUUID.POSITIVE;
+import static org.openmrs.module.ohricore.engine.CommonsUUID.SYMPTOMS_RESOLVED;
 import static org.openmrs.module.ohricore.engine.ComputedObservationUtil.dateWithinPeriodFromNow;
 
 /**
@@ -35,37 +41,39 @@ public class COVIDStatusComputedObservation implements OHRIComputedObservation {
     @Override
     public Obs compute(Patient patient) {
 
-        Concept finalCovidTestConcept = getConcept(COVIDStatusConceptUUID.FINAL_COVID_TEST_RESULT);
+        Concept finalCovidTestConcept = getConcept(FINAL_COVID_TEST_RESULT);
         List<Obs> finalCovidObs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), finalCovidTestConcept);
 
-        Concept newComputedConcept = computeCovidStatusConcept(finalCovidObs);
-
-        Obs newComputedObs = initialiseAnObs(patient, newComputedConcept);
+        Obs newComputedObs = computeHelper(finalCovidObs);
         Obs savedComputedObs = getSavedComputedObs(patient);
 
         return compareSavedComputedObs(savedComputedObs, newComputedObs);
     }
 
-    private Obs computeCovidStatusConcept(List<Obs> finalCovidTestObs) {
+    private Obs computeHelper(List<Obs> finalCovidTestObs) {
 
-        List<Concept> covidOutcomes = new ArrayList<>(Arrays.asList(getConcept(CommonsUUID.DIED), getConcept(CommonsUUID.SYMPTOMS_RESOLVED)));
+        List<Concept> covidOutcomes = new ArrayList<>(Arrays.asList(getConcept(LONG_COVID), getConcept(SYMPTOMS_RESOLVED)));
 
         Supplier<Stream<Obs>> finalCovidTestObsStream = finalCovidTestObs::stream;
+
         return finalCovidTestObsStream.get()
-                .filter(obs -> obs.getValueCoded() == getConcept(CommonsUUID.POSITIVE))
-                .filter(obs -> {
-                    Date testResultDate  = getObsTestResultDate(obs.getPerson(), obs, COVIDStatusConceptUUID.FINAL_COVID_TEST_RESULT_DATE);
-                    return dateWithinPeriodFromNow(testResultDate, ChronoUnit.DAYS, -15);
+                .filter(obs -> !covidOutcomes.contains(obs.getValueCoded()))//1. no unwanted outcomes
+                .map(obs -> {
+                    Obs latestTestDateObs = getLatestTestResultDateObs(obs.getPerson(), obs, FINAL_COVID_TEST_RESULT_DATE);
+                    if (dateWithinPeriodFromNow(latestTestDateObs.getValueDate(), ChronoUnit.DAYS, -15)) {
+                        return obs;
+                    }
+                    return null;
                 })
-                .filter(obs -> !covidOutcomes.contains(obs.getValueCoded()))
+                .filter(Objects::nonNull)
+                .filter(obs -> obs.getValueCoded() == getConcept(POSITIVE))
                 .findAny()
-                .map(obs -> initialiseAnObs(obs.getPerson(), getConcept(COVIDStatusConceptUUID.ACTIVE_COVID)))
+                .map(obs -> initialiseAnObs(obs.getPerson(), getConcept(ACTIVE_COVID)))
                 .orElse(finalCovidTestObsStream.get()
-                        .filter(obs -> obs.getValueCoded() == getConcept(CommonsUUID.NEGATIVE))
-                        .filter(obs -> dateWithinPeriodFromNow(finalCOVIDTestDate, ChronoUnit.DAYS, -90))
+                        .filter(obs -> obs.getValueCoded() == getConcept(CommonsUUID.POSITIVE))
                         .findAny()
-                        .map(Obs::getValueCoded)
-                        .orElse(getConcept(CommonsUUID.INDETERMINATE))
+                        .map(obs -> initialiseAnObs(obs.getPerson(), getConcept(EVER_HAD_COVID)))
+                        .orElse(null)
                 );
     }
 
@@ -81,18 +89,6 @@ public class COVIDStatusComputedObservation implements OHRIComputedObservation {
     @Override
     public List<Patient> getPatientCohort() {
         return null;
-    }
-
-    public Optional<Obs> getPositiveComputedHivStatus(Patient patient) {
-
-        List<Obs> computedHivObs = Context.getObsService()
-                .getObservationsByPersonAndConcept(patient.getPerson(), getConcept());
-
-        Supplier<Stream<Obs>> hivTestObsStream = computedHivObs::stream;
-
-        return hivTestObsStream.get()
-                .filter(obs -> obs.getValueCoded() == getConcept(CommonsUUID.POSITIVE))
-                .findFirst();
     }
 
     @Override

@@ -48,18 +48,15 @@ public class HIVStatusComputedObservation implements OHRIComputedObservation {
         if (savedComputedObs == null) {
             return newComputedObs;
         }
-
         if (savedComputedObs.getValueCoded() == newComputedObs.getValueCoded()
                 || savedComputedObs.getValueCoded().equals(getConcept(CommonsUUID.POSITIVE))) {
             return null;
         }
-
         if (newComputedObs.getValueCoded().equals(getConcept(CommonsUUID.POSITIVE))
                 || savedComputedObs.getValueCoded().equals(getConcept(CommonsUUID.INDETERMINATE))) {
             savedComputedObs.setValueCoded(newComputedObs.getValueCoded());
             return savedComputedObs;
         }
-
         return newComputedObs;
     }
 
@@ -73,7 +70,7 @@ public class HIVStatusComputedObservation implements OHRIComputedObservation {
                 .orElse(hivTestObsStream.get()
                         .filter(obs -> obs.getValueCoded() == getConcept(CommonsUUID.NEGATIVE))
                         .filter(obs -> {
-                            Date testResultDate = getObsTestResultDate(obs.getPerson(), obs, HIVStatusConceptUUID.FINAL_HIV_TEST_RESULT_DATE);
+                            Date testResultDate = getLatestTestResultDate(obs.getPerson(), obs, HIVStatusConceptUUID.FINAL_HIV_TEST_RESULT_DATE);
                             return dateWithinPeriodFromNow(testResultDate, ChronoUnit.DAYS, -90);
                         })
                         .findAny()

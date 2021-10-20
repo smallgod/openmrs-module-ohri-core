@@ -10,6 +10,8 @@ public class COVIDStatusConceptUUID {
 
     public static final String FINAL_COVID_TEST_RESULT = "5da5c21b-969f-41bd-9091-e40d4c707544";
 
+    public static final String FINAL_COVID_TEST_RESULT_DATE = "";//TODO: add
+
     public static final String ACTIVE_COVID = "6f66b62b-4a7c-449b-9555-2fabff5e47ff";
 
     public static final String LONG_COVID = "166183AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";

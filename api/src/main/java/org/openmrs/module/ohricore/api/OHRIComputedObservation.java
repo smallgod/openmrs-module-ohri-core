@@ -13,8 +13,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 /**
  * @author MayanjaXL, Amos, Stephen, smallGod
@@ -64,20 +62,33 @@ public interface OHRIComputedObservation {
         return computedObs;
     }
 
-    default Date getObsTestResultDate(Person person, Obs obsTestResult, String obsTestResultDateUUID) {
+    default Date getLatestTestResultDate(Person person, Obs obsTestResult, String obsTestResultDateUUID) {
 
         Concept obsTestResultDateConcept = getConcept(obsTestResultDateUUID);
 
         List<Obs> recordedTestResultDates = Context.getObsService()
                 .getObservationsByPersonAndConcept(person, obsTestResultDateConcept);
 
-        Supplier<Stream<Obs>> datesStream = recordedTestResultDates::stream;
-        return datesStream.get()
+        return recordedTestResultDates.stream()
                 .filter(obs -> obs.getEncounter() == obsTestResult.getEncounter())
-                .findAny()
+                .max(Comparator.comparing(Obs::getValueDate))
                 .map(Obs::getValueDate)
                 .orElse(null);
     }
+
+    default Obs getLatestTestResultDateObs(Person person, Obs obsTestResult, String obsTestResultDateUUID) {
+
+        Concept obsTestResultDateConcept = getConcept(obsTestResultDateUUID);
+
+        List<Obs> recordedTestResultDates = Context.getObsService()
+                .getObservationsByPersonAndConcept(person, obsTestResultDateConcept);
+
+        return recordedTestResultDates.stream()
+                .filter(obs -> obs.getEncounter() == obsTestResult.getEncounter())
+                .max(Comparator.comparing(Obs::getValueDate))
+                .orElse(null);
+    }
+
 
     default Obs getSavedComputedObs(Patient patient) {
 
