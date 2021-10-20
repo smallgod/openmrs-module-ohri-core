@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static org.openmrs.module.ohricore.engine.COVIDStatusConceptUUID.ACTIVE_COVID;
+import static org.openmrs.module.ohricore.engine.COVIDStatusConceptUUID.COVID_OUTCOME;
 import static org.openmrs.module.ohricore.engine.COVIDStatusConceptUUID.EVER_HAD_COVID;
 import static org.openmrs.module.ohricore.engine.COVIDStatusConceptUUID.FINAL_COVID_TEST_RESULT;
 import static org.openmrs.module.ohricore.engine.COVIDStatusConceptUUID.FINAL_COVID_TEST_RESULT_DATE;
@@ -51,7 +52,11 @@ public class COVIDStatusComputedObservation implements OHRIComputedObservation {
     public Obs compute(Patient patient) {
 
         Concept finalCovidTestConcept = getConcept(FINAL_COVID_TEST_RESULT);
+        Concept covidOutcomeConcept = getConcept(COVID_OUTCOME);
+
         List<Obs> finalCovidObs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), finalCovidTestConcept);
+        List<Obs> covidOutcomeObs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), covidOutcomeConcept);
+        finalCovidObs.addAll(covidOutcomeObs);
 
         Obs newComputedObs = computeHelper(finalCovidObs);
         Obs savedComputedObs = getSavedComputedObs(patient);
