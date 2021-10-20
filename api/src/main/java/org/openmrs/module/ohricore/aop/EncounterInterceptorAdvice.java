@@ -29,8 +29,8 @@ public class EncounterInterceptorAdvice implements AfterReturningAdvice {
 						Encounter encounter = (Encounter) arg;
 						List<OHRIComputedObservation> ohriComputedObservations = OHRIComputedObservationFactory
 						        .getComputedObservations(encounter);
-						for (OHRIComputedObservation computedConcept : ohriComputedObservations) {
-							computedConcept.computeAndPersistObs(encounter);
+						for (OHRIComputedObservation computedObs : ohriComputedObservations) {
+							computedObs.compute(encounter.getPatient());
 						}
 					}
 				}

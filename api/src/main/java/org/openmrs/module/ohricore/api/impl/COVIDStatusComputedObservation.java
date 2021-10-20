@@ -4,10 +4,13 @@ import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.db.PatientDAO;
 import org.openmrs.module.ohricore.api.OHRIComputedObservation;
 import org.openmrs.module.ohricore.engine.COVIDStatusConceptUUID;
 import org.openmrs.module.ohricore.engine.CommonsUUID;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.temporal.ChronoUnit;
@@ -33,6 +36,12 @@ import static org.openmrs.module.ohricore.engine.ComputedObservationUtil.dateWit
 @Component("covidStatusComputedConcept")
 public class COVIDStatusComputedObservation implements OHRIComputedObservation {
 
+    @Autowired
+    private PatientDAO dao;
+
+    @Autowired
+    private PatientService patientService;
+
     @Override
     public Obs compute(Encounter triggeringEncounter) {
         return compute(triggeringEncounter.getPatient());
@@ -57,7 +66,7 @@ public class COVIDStatusComputedObservation implements OHRIComputedObservation {
         Supplier<Stream<Obs>> finalCovidTestObsStream = finalCovidTestObs::stream;
 
         return finalCovidTestObsStream.get()
-                .filter(obs -> !covidOutcomes.contains(obs.getValueCoded()))//1. no unwanted outcomes
+                .filter(obs -> !covidOutcomes.contains(obs.getValueCoded()))
                 .map(obs -> {
                     Obs latestTestDateObs = getLatestTestResultDateObs(obs.getPerson(), obs, FINAL_COVID_TEST_RESULT_DATE);
                     if (dateWithinPeriodFromNow(latestTestDateObs.getValueDate(), ChronoUnit.DAYS, -15)) {
@@ -78,17 +87,18 @@ public class COVIDStatusComputedObservation implements OHRIComputedObservation {
     }
 
     @Override
+    public List<Patient> getPatientCohort() {
+        //TODO: Exploring available methods in patientService and patientDAO/HibernatePatientDAO first
+        return null;
+    }
+
+    @Override
     public Obs compareSavedComputedObs(Obs savedComputedObs, Obs newComputedObs) {
 
         if (savedComputedObs.getValueCoded() == newComputedObs.getValueCoded()) {
             return null;
         }
         return newComputedObs;
-    }
-
-    @Override
-    public List<Patient> getPatientCohort() {
-        return null;
     }
 
     @Override

@@ -83,12 +83,12 @@ public interface OHRIComputedObservation {
         List<Obs> recordedTestResultDates = Context.getObsService()
                 .getObservationsByPersonAndConcept(person, obsTestResultDateConcept);
 
-        return recordedTestResultDates.stream()
+        return recordedTestResultDates
+                .stream()
                 .filter(obs -> obs.getEncounter() == obsTestResult.getEncounter())
                 .max(Comparator.comparing(Obs::getValueDate))
                 .orElse(null);
     }
-
 
     default Obs getSavedComputedObs(Patient patient) {
 
