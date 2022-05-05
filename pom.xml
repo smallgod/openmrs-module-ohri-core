@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -11,7 +10,7 @@
 
     <groupId>org.openmrs.module</groupId>
     <artifactId>ohri-core</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>OHRICore</name>
     <description>OHRI Core openMRS module</description>
@@ -26,10 +25,16 @@
 
     <scm>
         <connection>scm:git:git@github.com:UCSF-IGHS/openmrs-module-ohri-core.git</connection>
-        <developerConnection>scm:git:git@github.com:UCSF-IGHS/openmrs-module-ohri-core.git</developerConnection>
         <url>https://github.com/UCSF-IGHS/openmrs-module-ohri-core</url>
-        <tag>1.0.0</tag>
-    </scm>
+        <developerConnection>scm:git:git@github.com:UCSF-IGHS/openmrs-module-ohri-core.git</developerConnection>
+      <tag>HEAD</tag>
+  </scm>
+
+    <!--    <scm>-->
+    <!--        <connection>scm:git:git@github.com:user/project.git</connection>-->
+    <!--        <url>scm:git:git@github.com:user/project.git</url>-->
+    <!--        <developerConnection>scm:git:git@github.com:user/project.git</developerConnection>-->
+    <!--    </scm>-->
 
     <modules>
         <module>api</module>
@@ -111,7 +116,7 @@
                         <useReleaseProfile>false</useReleaseProfile>
                         <arguments>-Prelease</arguments>
                         -->
-                        <tagNameFormat>@{project.version}</tagNameFormat>
+                        <tagNameFormat>v@{project.version}</tagNameFormat>
                     </configuration>
                 </plugin>
             </plugins>
