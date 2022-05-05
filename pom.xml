@@ -11,7 +11,7 @@
 
     <groupId>org.openmrs.module</groupId>
     <artifactId>ohri-core</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>OHRICore</name>
     <description>OHRI Core openMRS module</description>
