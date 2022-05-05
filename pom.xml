@@ -18,23 +18,11 @@
 
     <url>https://wiki.openmrs.org/x/FQ4z</url>
 
-    <!--    <scm>-->
-    <!--        <connection>scm:git:git@github.com:openmrs/openmrs-module-ohri-core.git</connection>-->
-    <!--        <developerConnection>scm:git:git@github.com:openmrs/openmrs-module-ohri-core.git</developerConnection>-->
-    <!--        <url>https://github.com/openmrs/openmrs-module-ohri-core/</url>-->
-    <!--    </scm>-->
-
     <scm>
         <connection>scm:git:git@github.com:UCSF-IGHS/openmrs-module-ohri-core.git</connection>
         <url>https://github.com/UCSF-IGHS/openmrs-module-ohri-core</url>
         <developerConnection>scm:git:git@github.com:UCSF-IGHS/openmrs-module-ohri-core.git</developerConnection>
     </scm>
-
-    <!--    <scm>-->
-    <!--        <connection>scm:git:git@github.com:user/project.git</connection>-->
-    <!--        <url>scm:git:git@github.com:user/project.git</url>-->
-    <!--        <developerConnection>scm:git:git@github.com:user/project.git</developerConnection>-->
-    <!--    </scm>-->
 
     <modules>
         <module>api</module>
