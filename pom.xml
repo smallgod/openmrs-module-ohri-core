@@ -28,7 +28,6 @@
         <connection>scm:git:git@github.com:UCSF-IGHS/openmrs-module-ohri-core.git</connection>
         <url>https://github.com/UCSF-IGHS/openmrs-module-ohri-core</url>
         <developerConnection>scm:git:git@github.com:UCSF-IGHS/openmrs-module-ohri-core.git</developerConnection>
-        <tag>HEAD</tag>
     </scm>
 
     <!--    <scm>-->
