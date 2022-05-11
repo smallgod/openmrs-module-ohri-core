@@ -10,7 +10,7 @@
 
     <groupId>org.openmrs.module</groupId>
     <artifactId>ohricore</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>OHRICore</name>
     <description>OHRI Core openMRS module</description>
@@ -21,7 +21,7 @@
         <connection>scm:git:git@github.com:UCSF-IGHS/openmrs-module-ohri-core.git</connection>
         <url>https://github.com/UCSF-IGHS/openmrs-module-ohri-core</url>
         <developerConnection>scm:git:git@github.com:UCSF-IGHS/openmrs-module-ohri-core.git</developerConnection>
-        <tag>v1.0.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <modules>
