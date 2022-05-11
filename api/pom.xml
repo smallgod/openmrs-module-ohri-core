@@ -3,7 +3,7 @@
 
     <parent>
         <groupId>org.openmrs.module</groupId>
-        <artifactId>ohri-core</artifactId>
+        <artifactId>ohricore</artifactId>
         <version>1.0.1-SNAPSHOT</version>
     </parent>
 
