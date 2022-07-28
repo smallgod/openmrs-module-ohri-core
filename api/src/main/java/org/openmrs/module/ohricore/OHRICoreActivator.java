@@ -22,70 +22,69 @@ import org.springframework.core.task.TaskExecutor;
  * This class contains the logic that is run every time this module is either started or shutdown
  */
 public class OHRICoreActivator extends BaseModuleActivator {
-
-    private Log log = LogFactory.getLog(this.getClass());
-
-    public OHRICoreActivator() {
-        super();
-    }
-
-    /**
-     * @see #started()
-     */
-    public void started() {
-
-        log.info("Started OHRICore");
-    }
-
-    /**
-     * @see #shutdown()
-     */
-    public void shutdown() {
-        log.info("Shutdown OHRICore");
-    }
-
-
-    @Override
-    public void contextRefreshed() {
-
-        String taskName = "Query Lab Results";
-        Long repeatInterval = 300L; //second
-        String taskClassName = QueryLabResultsTask.class.getName();
-        String description = "Query Lab Results Task - DISI";
-
-        addTask(taskName, taskClassName, repeatInterval, description);
-    }
-
-    @Override
-    public void stopped() {
-        super.stopped();
-    }
-
-    @Override
-    public void willRefreshContext() {
-        super.willRefreshContext();
-    }
-
-    @Override
-    public void willStart() {
-        super.willStart();
-    }
-
-    @Override
-    public void willStop() {
-        super.willStop();
-    }
-
-    void addTask(String name, String className, Long repeatInterval, String description) {
-
-        SchedulerService scheduler = Context.getSchedulerService();
-        TaskDefinition taskDefinition = scheduler.getTaskByName(name);
-        if (taskDefinition == null) {
-
-            taskDefinition = new TaskDefinition(null, name, description, className);
-            taskDefinition.setStartOnStartup(Boolean.TRUE);
-            taskDefinition.setRepeatInterval(repeatInterval);
-            scheduler.saveTaskDefinition(taskDefinition);
-        }
-    }
+	
+	private Log log = LogFactory.getLog(this.getClass());
+	
+	public OHRICoreActivator() {
+		super();
+	}
+	
+	/**
+	 * @see #started()
+	 */
+	public void started() {
+		
+		log.info("Started OHRICore");
+	}
+	
+	/**
+	 * @see #shutdown()
+	 */
+	public void shutdown() {
+		log.info("Shutdown OHRICore");
+	}
+	
+	@Override
+	public void contextRefreshed() {
+		
+		String taskName = "Query Lab Results";
+		Long repeatInterval = 60L; //second
+		String taskClassName = QueryLabResultsTask.class.getName();
+		String description = "Query Lab Results Task - DISI";
+		
+		addTask(taskName, taskClassName, repeatInterval, description);
+	}
+	
+	@Override
+	public void stopped() {
+		super.stopped();
+	}
+	
+	@Override
+	public void willRefreshContext() {
+		super.willRefreshContext();
+	}
+	
+	@Override
+	public void willStart() {
+		super.willStart();
+	}
+	
+	@Override
+	public void willStop() {
+		super.willStop();
+	}
+	
+	void addTask(String name, String className, Long repeatInterval, String description) {
+		
+		SchedulerService scheduler = Context.getSchedulerService();
+		TaskDefinition taskDefinition = scheduler.getTaskByName(name);
+		if (taskDefinition == null) {
+			
+			taskDefinition = new TaskDefinition(null, name, description, className);
+			taskDefinition.setStartOnStartup(Boolean.TRUE);
+			taskDefinition.setRepeatInterval(repeatInterval);
+			scheduler.saveTaskDefinition(taskDefinition);
+		}
+	}
 }
