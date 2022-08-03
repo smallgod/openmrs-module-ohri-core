@@ -39,6 +39,7 @@ import static org.openmrs.module.ohricore.OhriCoreConstant.FHIR_DIAGNOSTIC_REPOR
 import static org.openmrs.module.ohricore.OhriCoreConstant.FHIR_DIAGNOSTIC_REPORT_OBS;
 import static org.openmrs.module.ohricore.OhriCoreConstant.FHIR_OBS_VL_RESULT;
 import static org.openmrs.module.ohricore.OhriCoreConstant.FHIR_REJECTED_OHRI_TASKS;
+import static org.openmrs.module.ohricore.OhriCoreConstant.FHIR_SERVICE_REQUEST;
 import static org.openmrs.module.ohricore.OhriCoreConstant.OHRI_ENCOUNTER_SYSTEM_IDENTIFIER;
 
 /**
@@ -91,10 +92,25 @@ public class FhirRemoteAccessHelper {
 			System.out.println("FHIR Rejected Tasks:" + rejectedLabTasksResponse);
 			
 			JSONArray failedTasks = getLabResultsTasks(rejectedLabTasksResponse);
+			Encounter encounter = Context.getEncounterService().getEncounterByUuid(ENCOUNTER_PATIENT_TWO);
+			Patient backupPatient = encounter.getPatient();
+			Concept sampleRejected = Context.getConceptService().getConceptByUuid(CONCEPT_VL_SAMPLE_REJECTED);
 			
 			for (int i = 0; i < failedTasks.length(); i++) {
 				
 				JSONObject labResult = failedTasks.getJSONObject(i).getJSONObject("resource");
+				
+				//Fetch Patient Details/UUID
+				JSONArray basedOn = labResult.getJSONArray("basedOn");
+				JSONObject serviceRequestTag = basedOn.getJSONObject(0);
+				String serviceRequestId = serviceRequestTag.getString("reference").split("/")[1];
+				String serviceRequestResp = getRequest(FHIR_SERVICE_REQUEST + serviceRequestId);
+				String patientReference = new JSONObject(serviceRequestResp).getJSONObject("subject").getString("reference");
+				Patient patient = Context.getPatientService().getPatientByUuid(patientReference.split("/")[1]);
+				if (patient == null) {
+					patient = backupPatient;
+				}
+				
 				JSONObject statusReason = labResult.getJSONObject("statusReason");
 				
 				JSONArray codingArr = statusReason.getJSONArray("coding");
@@ -113,9 +129,7 @@ public class FhirRemoteAccessHelper {
 					System.err.println("Query Lab Results ParseException: " + e.getLocalizedMessage());
 				}
 				
-				Concept sampleRejected = Context.getConceptService().getConceptByUuid(CONCEPT_VL_SAMPLE_REJECTED);
-				Encounter encounter = Context.getEncounterService().getEncounterByUuid(ENCOUNTER_PATIENT_TWO);
-				Obs obs = createObs(encounter.getPatient(), sampleRejected, encounter);
+				Obs obs = createObs(patient, sampleRejected, encounter);
 				obs.setObsDatetime(obsDate);
 				obs.setValueCoded(Context.getConceptService().getConceptByUuid(CONCEPT_YES));
 				obs.setComment(code + " | " + display);
@@ -295,10 +309,6 @@ public class FhirRemoteAccessHelper {
     }
 	
 	private FhirObsResourceType readLabObservation(String observationResponse) {
-		
-		//obsResourceType.setPatientId(patientId);
-		//obsResourceType.setValueInteger(valueInteger);
-		//obsResourceType.setEffectiveDateTime(effectiveDateTime);
 		
 		JSONObject root = new JSONObject(observationResponse);
 		if (root.getString("resourceType").equals("Observation")) {

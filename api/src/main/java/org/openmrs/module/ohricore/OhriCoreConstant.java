@@ -15,6 +15,8 @@ public final class OhriCoreConstant {
 	
 	public static final String FHIR_COMPLETED_TASKS = "/Task?status=completed";
 	
+	public static final String FHIR_SERVICE_REQUEST = "/ServiceRequest/";
+	
 	public static final String FHIR_REJECTED_TASKS_TEST = "/Task?owner=Organization/101283&status=rejected";
 	
 	public static final String FHIR_REJECTED_TASKS = "/Task?status=rejected";
