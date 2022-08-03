@@ -10,7 +10,7 @@ public final class OhriCoreConstant {
 	public static final String FHIR_SANDBOX_URL = "https://oh-route.gicsandbox.org/fhir";
 	
 	public static final String FHIR_COMPLETED_OHRI_TASKS = "/Task?owner=Organization/101283&status=completed&_count=999";
-
+	
 	public static final String FHIR_REJECTED_OHRI_TASKS = "/Task?owner=Organization/101283&status=rejected&_count=999";
 	
 	public static final String FHIR_COMPLETED_TASKS = "/Task?status=completed";
@@ -50,8 +50,7 @@ public final class OhriCoreConstant {
 	public static final String CONCEPT_TEST_PATIENT_ONE = "8dce4f19-b34b-4d56-aba8-1a4c68c049bc";//Mobuto
 	
 	public static final String CONCEPT_TEST_PATIENT_TWO = "704c58ac-b7c2-44d2-b20e-1ff985bbadba"; //Abert Einstein
-
-
+	
 	public static final String OHRI_ENCOUNTER_SYSTEM_IDENTIFIER = "OHRI_ENCOUNTER_UUID";
 	
 }
