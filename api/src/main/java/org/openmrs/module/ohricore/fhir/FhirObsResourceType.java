@@ -1,5 +1,7 @@
 package org.openmrs.module.ohricore.fhir;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,13 +18,17 @@ public class FhirObsResourceType {
 	
 	private String valueBoolean;
 	
-	private String valueInteger;
+	private Integer valueInteger;
+	
+	private String effectiveDateTime;
 	
 	private FhirCodeableConcept valueCodeableConcept;
 	
 	private FhirCodeableConcept code;
 	
 	private List<FhirCoding> coding;
+	
+	private JSONObject root;
 	
 	public FhirObsResourceType() {
         coding = new ArrayList<>();
@@ -60,11 +66,11 @@ public class FhirObsResourceType {
 		this.valueBoolean = valueBoolean;
 	}
 	
-	public String getValueInteger() {
+	public Integer getValueInteger() {
 		return valueInteger;
 	}
 	
-	public void setValueInteger(String valueInteger) {
+	public void setValueInteger(Integer valueInteger) {
 		this.valueInteger = valueInteger;
 	}
 	
@@ -90,5 +96,21 @@ public class FhirObsResourceType {
 	
 	public void setCoding(List<FhirCoding> coding) {
 		this.coding = coding;
+	}
+	
+	public String getEffectiveDateTime() {
+		return effectiveDateTime;
+	}
+	
+	public void setEffectiveDateTime(String effectiveDateTime) {
+		this.effectiveDateTime = effectiveDateTime;
+	}
+	
+	public JSONObject getRoot() {
+		return root;
+	}
+	
+	public void setRoot(JSONObject root) {
+		this.root = root;
 	}
 }

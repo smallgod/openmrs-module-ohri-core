@@ -28,7 +28,8 @@ public class QueryLabResultsTask extends AbstractTask {
 				
 				FhirRemoteAccessHelper fhirAccess = new FhirRemoteAccessHelper();
 				synchronized (MUTEX_QUERY_LABRESULTS) {
-					fhirAccess.fetchLabResults();
+					fhirAccess.fetchCompletedLabResults();
+					fhirAccess.fetchRejectedLabResults();
 				}
 				
 			}
