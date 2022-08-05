@@ -25,7 +25,7 @@ public final class OhriCoreConstant {
 	
 	public static final String FHIR_DIAGNOSTIC_REPORT_OBS = "/Observation/";
 	
-	public static final String FHIR_OBS_VL_RESULT = "VL-RESULT";
+	public static final String FHIR_OBS_VL_RESULT = "VL-MOST-RECENT-TEST-RESULT";
 	
 	public static final String CONCEPT_VL_RESULT = "856AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	
