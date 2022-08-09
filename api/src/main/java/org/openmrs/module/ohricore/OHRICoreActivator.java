@@ -11,7 +11,11 @@ package org.openmrs.module.ohricore;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
+import org.openmrs.module.ohricore.task.QueryLabResultsTask;
+import org.openmrs.scheduler.SchedulerService;
+import org.openmrs.scheduler.TaskDefinition;
 import org.springframework.core.task.TaskExecutor;
 
 /**
@@ -20,6 +24,10 @@ import org.springframework.core.task.TaskExecutor;
 public class OHRICoreActivator extends BaseModuleActivator {
 	
 	private Log log = LogFactory.getLog(this.getClass());
+	
+	public OHRICoreActivator() {
+		super();
+	}
 	
 	/**
 	 * @see #started()
@@ -34,5 +42,49 @@ public class OHRICoreActivator extends BaseModuleActivator {
 	 */
 	public void shutdown() {
 		log.info("Shutdown OHRICore");
+	}
+	
+	@Override
+	public void contextRefreshed() {
+		
+		String taskName = "Query Lab Results";
+		Long repeatInterval = 60L; //second
+		String taskClassName = QueryLabResultsTask.class.getName();
+		String description = "Query Lab Results Task - DISI";
+		
+		addTask(taskName, taskClassName, repeatInterval, description);
+	}
+	
+	@Override
+	public void stopped() {
+		super.stopped();
+	}
+	
+	@Override
+	public void willRefreshContext() {
+		super.willRefreshContext();
+	}
+	
+	@Override
+	public void willStart() {
+		super.willStart();
+	}
+	
+	@Override
+	public void willStop() {
+		super.willStop();
+	}
+	
+	void addTask(String name, String className, Long repeatInterval, String description) {
+		
+		SchedulerService scheduler = Context.getSchedulerService();
+		TaskDefinition taskDefinition = scheduler.getTaskByName(name);
+		if (taskDefinition == null) {
+			
+			taskDefinition = new TaskDefinition(null, name, description, className);
+			taskDefinition.setStartOnStartup(Boolean.TRUE);
+			taskDefinition.setRepeatInterval(repeatInterval);
+			scheduler.saveTaskDefinition(taskDefinition);
+		}
 	}
 }
