@@ -6,6 +6,7 @@
         <groupId>org.openmrs.module</groupId>
         <artifactId>ohricore</artifactId>
         <version>1.0.2-SNAPSHOT</version>
+
     </parent>
 
     <artifactId>ohricore-api</artifactId>
@@ -35,5 +36,4 @@
         </dependency>
 
     </dependencies>
-
 </project>

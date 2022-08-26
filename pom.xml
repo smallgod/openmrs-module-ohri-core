@@ -186,6 +186,7 @@
             <id>openmrs-repo</id>
             <name>OpenMRS Nexus Repository</name>
             <url>https://mavenrepo.openmrs.org/public</url>
+
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
