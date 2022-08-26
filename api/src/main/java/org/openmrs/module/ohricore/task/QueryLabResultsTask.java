@@ -2,7 +2,7 @@ package org.openmrs.module.ohricore.task;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.module.ohricore.fhir.FhirRemoteAccessHelper;
+import org.openmrs.module.ohricore.fhir.FhirProcessor;
 import org.openmrs.scheduler.tasks.AbstractTask;
 
 import static org.openmrs.module.ohricore.OhriCoreConstant.MUTEX_QUERY_LABRESULTS;
@@ -26,10 +26,10 @@ public class QueryLabResultsTask extends AbstractTask {
 			
 			try {
 				
-				FhirRemoteAccessHelper fhirAccess = new FhirRemoteAccessHelper();
+				FhirProcessor fhirAccess = new FhirProcessor();
 				synchronized (MUTEX_QUERY_LABRESULTS) {
-					fhirAccess.fetchCompletedLabResults();
-					fhirAccess.fetchRejectedLabResults();
+					fhirAccess.fetchCompletedViralLoadLabResults();
+					fhirAccess.fetchRejectedViralLoadRequests();
 				}
 				
 			}
