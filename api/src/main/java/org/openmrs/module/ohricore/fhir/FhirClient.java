@@ -31,10 +31,9 @@ public class FhirClient {
 		String url = Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_PARENT_SERVER_URL);
 		String username = Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_PARENT_SERVER_USERNAME);
 		String password = Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_PARENT_SERVER_PASSWORD);
-		URI uri = new URI(url + "/ws/fhir2/R4");
-		System.out.println("URI: " + uri);
+		URI uri = new URI(url);
+		//URI uri = new URI(url + "/ws/fhir2/R4");
 		
-		// create auth credentials
 		String auth = username + ":" + password;
 		String base64Creds = Base64.getEncoder().encodeToString(auth.getBytes());
 		
@@ -84,9 +83,9 @@ public class FhirClient {
 	
 	public static Bundle fetchFhirObservationsWithVlResult() throws URISyntaxException {
 		
-		return getClient().search().forResource(Observation.class)
+		return getClient().search().forResource(Observation.class).where(Task.CODE.exactly().code(FHIR_OBS_VL_RESULT))
+		        .returnBundle(Bundle.class).execute();
 		//.where(DiagnosticReport.hasChainedProperty)
-		        .where(Task.CODE.exactly().code(FHIR_OBS_VL_RESULT)).returnBundle(Bundle.class).execute();
 	}
 	
 	public static Bundle fetchFhirDiagnosticReports2(String... diagnosticReportIds) throws URISyntaxException {
