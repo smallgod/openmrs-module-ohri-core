@@ -11,6 +11,7 @@ import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.Task;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ohricore.OhriCoreConstant;
+import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.net.URISyntaxException;

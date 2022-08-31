@@ -19,6 +19,12 @@
 
 	<require_version>${openmrsPlatformVersion}</require_version>
 
+	<!-- Required Modules -->
+	<require_modules>
+		<require_module version="${fhir2Version}">${project.parent.groupId}.fhir2</require_module>
+	</require_modules>
+	<!-- / Required Modules -->
+
 	<!-- Extensions -->
 	<!--
 	<extension>
@@ -30,6 +36,14 @@
 	<aware_of_modules>
 		<aware_of_module>org.openmrs.module.legacyui</aware_of_module>
 	</aware_of_modules>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.fhir.sandbox.url</property>
+		<defaultValue>https://oh-route.gicsandbox.org/fhir</defaultValue>
+		<description>
+			The URL to the DISI FHIR Resources Server
+		</description>
+	</globalProperty>
 
 	<advice>
 		<point>org.openmrs.api.EncounterService</point>
