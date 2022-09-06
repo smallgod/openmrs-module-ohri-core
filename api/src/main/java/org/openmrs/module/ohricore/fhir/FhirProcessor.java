@@ -13,17 +13,23 @@ import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
 
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
+import static org.openmrs.module.ohricore.OhriCoreConstant.CONCEPT_COVID_RESULT_ANTIGEN;
+import static org.openmrs.module.ohricore.OhriCoreConstant.CONCEPT_COVID_RESULT_DATE;
 import static org.openmrs.module.ohricore.OhriCoreConstant.CONCEPT_VL_RESULT;
 import static org.openmrs.module.ohricore.OhriCoreConstant.CONCEPT_VL_RESULT_DATE;
 import static org.openmrs.module.ohricore.OhriCoreConstant.CONCEPT_VL_SAMPLE_REJECTED;
 import static org.openmrs.module.ohricore.OhriCoreConstant.CONCEPT_YES;
+import static org.openmrs.module.ohricore.OhriCoreConstant.FHIR_OBS_COVID_RESULT;
+import static org.openmrs.module.ohricore.OhriCoreConstant.FHIR_OBS_VL_RESULT;
+import static org.openmrs.module.ohricore.OhriCoreConstant.INCONCLUSIVE;
+import static org.openmrs.module.ohricore.OhriCoreConstant.NEGATIVE;
 import static org.openmrs.module.ohricore.OhriCoreConstant.OHRI_ENCOUNTER_SYSTEM;
+import static org.openmrs.module.ohricore.OhriCoreConstant.POSITIVE;
 import static org.openmrs.module.ohricore.fhir.FhirClient.CTX;
 import static org.openmrs.module.ohricore.fhir.FhirClient.fetchFhirDiagnosticReport;
 import static org.openmrs.module.ohricore.fhir.FhirClient.fetchFhirObservation;
@@ -78,7 +84,6 @@ public class FhirProcessor {
                     patient = encounter.getPatient();
                 }
             }
-            System.out.println("Encounter: " + encounter);
             System.out.println("Patient  : " + patient);
 
             if (patient != null) {
@@ -129,7 +134,6 @@ public class FhirProcessor {
                     }
                 }
             }
-            System.out.println("Encounter: " + encounter);
             System.out.println("Patient  : " + patient);
 
             if (patient != null) {
@@ -154,30 +158,90 @@ public class FhirProcessor {
                     }
 
                     for (String obsId : obsIdList) {
-
                         Observation obs = fetchFhirObservation(obsId);
-
-                        String vlResultValue = obs.getValueStringType().getValue();
-                        Date dateOfVlResult = obs.getEffectiveDateTimeType().getValue();
-
-                        Concept vlResultDateConcept = Context.getConceptService().getConceptByUuid(CONCEPT_VL_RESULT_DATE);
-                        Obs vlResultDate = createObs(patient, vlResultDateConcept, encounter);
-                        vlResultDate.setObsDatetime(dateOfVlResult);
-                        vlResultDate.setValueDate(dateOfVlResult);
-
-                        Concept vlResultConcept = Context.getConceptService().getConceptByUuid(CONCEPT_VL_RESULT);
-                        Obs vlResult = createObs(patient, vlResultConcept, encounter);
-                        vlResult.setObsDatetime(dateOfVlResult);
-                        vlResult.setValueNumeric(Double.valueOf(vlResultValue));
-
-                        observations.add(vlResult);
-                        observations.add(vlResultDate);
+                        List<Obs> obsList = findObs(patient, encounter, obs);
+                        observations.addAll(obsList);
                     }
                 }
             }
         }
         return observations;
     }
+	
+	private List<Obs> findObs(org.openmrs.Patient patient, Encounter encounter, Observation obs) {
+		
+		String code = obs.getCode().getCoding().get(0).getCode();
+		String resultValue = obs.getValueStringType().getValue();
+		Date resultDate = obs.getEffectiveDateTimeType().getValue();
+		
+		switch (code) {
+			case FHIR_OBS_VL_RESULT:
+				return readVlObsHelper(patient, encounter, resultValue, resultDate);
+				
+			case FHIR_OBS_COVID_RESULT:
+				return readCovidObsHelper(patient, encounter, resultValue, resultDate);
+				
+				//case FHIR_OBS_HIV_RESULT:
+				//	return readCovidObsHelper(patient, encounter, resultValue, resultDate);
+				
+		}
+		return Collections.emptyList();
+	}
+	
+	private List<Obs> readVlObsHelper(org.openmrs.Patient patient, Encounter encounter, String resultValue, Date resultDate) {
+
+        List<Obs> obs = new ArrayList<>();
+
+        Concept resultConcept = Context.getConceptService().getConceptByUuid(CONCEPT_VL_RESULT);
+        Obs resultObs = createObs(patient, resultConcept, encounter);
+        resultObs.setObsDatetime(resultDate);
+        resultObs.setValueNumeric(Double.valueOf(resultValue));
+
+        Obs dateObs = readDateObsHelper(patient, encounter, CONCEPT_VL_RESULT_DATE, resultDate);
+
+        obs.add(resultObs);
+        obs.add(dateObs);
+        return obs;
+    }
+	
+	private List<Obs> readCovidObsHelper(org.openmrs.Patient patient, Encounter encounter, String resultValue, Date resultDate) {
+
+        List<Obs> obsList = new ArrayList<>();
+
+        Concept resultConcept = Context.getConceptService().getConceptByUuid(CONCEPT_COVID_RESULT_ANTIGEN);//TODO: there are different kind of Tests (PCR, Antigen)
+        Obs resultObs = createObs(patient, resultConcept, encounter);
+        resultObs.setObsDatetime(resultDate);
+        resultObs.setValueCoded(interpretTestValue(resultValue));//TODO: set depending on value received
+
+        Obs dateObs = readDateObsHelper(patient, encounter, CONCEPT_COVID_RESULT_DATE, resultDate);
+
+        obsList.add(resultObs);
+        obsList.add(dateObs);
+        return obsList;
+    }
+	
+	private Obs readDateObsHelper(org.openmrs.Patient patient, Encounter encounter, String dateUUID, Date resultDate) {
+		
+		Concept dateConcept = Context.getConceptService().getConceptByUuid(dateUUID);
+		Obs dateObs = createObs(patient, dateConcept, encounter);
+		dateObs.setObsDatetime(resultDate);
+		dateObs.setValueDate(resultDate);
+		return dateObs;
+	}
+	
+	private Concept interpretTestValue(String testResult) {
+		
+		switch (testResult) {
+		
+			case "positive":
+				return Context.getConceptService().getConceptByUuid(POSITIVE);
+			case "negative":
+				return Context.getConceptService().getConceptByUuid(NEGATIVE);
+			case "inconclusive":
+				return Context.getConceptService().getConceptByUuid(INCONCLUSIVE);
+		}
+		return Context.getConceptService().getConceptByUuid(INCONCLUSIVE);
+	}
 	
 	private Obs createObs(org.openmrs.Patient patient, Concept concept, Encounter encounter) {
 		
