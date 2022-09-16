@@ -40,13 +40,16 @@ public class EncounterInterceptorAdvice implements AfterReturningAdvice {
 
         try {
             if (methodInvoked.getName().equals(ConceptComputeTrigger.SAVE_ENCOUNTER)) {
+
                 for (Object arg : methodArgs) {
                     if (arg instanceof Encounter) {
+
                         Encounter encounter = (Encounter) arg;
-                        List<OHRIComputedConcept> ohriComputedConcepts = OHRIComputedConceptsFactory
-                                .getComputedConcepts(encounter);
+                        List<OHRIComputedConcept> ohriComputedConcepts
+                                = OHRIComputedConceptsFactory.getComputedConcepts(encounter);
+
                         for (OHRIComputedConcept computedConcept : ohriComputedConcepts) {
-                            computedConcept.computeAndPersistObs(encounter);
+                            //computedConcept.computeAndPersistObs(encounter); //Disable computed obs here: SG - Sept.11.2022
                         }
 
                         //TODO: Re-factor this code into a separate neat file

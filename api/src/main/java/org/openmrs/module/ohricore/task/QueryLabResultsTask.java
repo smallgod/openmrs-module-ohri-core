@@ -1,5 +1,6 @@
 package org.openmrs.module.ohricore.task;
 
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.ohricore.fhir.FhirProcessor;
@@ -17,10 +18,14 @@ public class QueryLabResultsTask extends AbstractTask {
 	@Override
 	public void execute() {
 		
+		logger.debug("QueryLabResultsTask execute() called...");
+		System.out.println("QueryLabResultsTask execute() called...");
+		
 		if (!isExecuting) {
 			
 			if (logger.isDebugEnabled())
 				logger.debug("QueryLabResultsTask running...");
+			System.out.println("QueryLabResultsTask running...");
 			
 			startExecuting();
 			
@@ -28,17 +33,21 @@ public class QueryLabResultsTask extends AbstractTask {
 				
 				FhirProcessor fhirAccess = new FhirProcessor();
 				synchronized (MUTEX_QUERY_LABRESULTS) {
-					fhirAccess.fetchCompletedViralLoadLabResults();
-					fhirAccess.fetchRejectedViralLoadRequests();
+					fhirAccess.fetchCompletedLabResults();
+					fhirAccess.fetchRejectedLoadRequests();
 				}
 				
 			}
 			catch (Exception e) {
 				logger.error("Error while running QueryLabResultsTask: ", e);
+				System.err.println("Error while running QueryLabResultsTask: " + e.getMessage());
 			}
 			finally {
 				stopExecuting();
 			}
+		} else {
+			logger.error("Error, Task already running, can't execute again");
+			System.err.println("Error, Task already running, can't execute again");
 		}
 	}
 }
