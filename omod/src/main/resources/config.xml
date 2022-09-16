@@ -16,7 +16,7 @@
 	
 	<!-- <updateURL>https://modules.openmrs.org/modules/download/@MODULE_ID@/update.rdf</updateURL> -->
 	<!-- /Base Module Properties -->
-
+  
 	<require_version>${openmrsPlatformVersion}</require_version>
 
 	<!-- Required Modules -->
@@ -27,10 +27,12 @@
 
 	<!-- Extensions -->
 	<!--
+
 	<extension>
 		<point>org.openmrs.admin.list</point>
 		<class>org.openmrs.module.ohricore.extension.html.AdminList</class>
 	</extension>
+
 	-->
 
 	<aware_of_modules>
