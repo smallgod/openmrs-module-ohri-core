@@ -2,7 +2,6 @@
 //
 //import org.apache.commons.logging.Log;
 //import org.apache.commons.logging.LogFactory;
-//import org.hl7.fhir.r4.model.Bundle;
 //import org.json.JSONArray;
 //import org.json.JSONException;
 //import org.json.JSONObject;
@@ -12,13 +11,7 @@
 //import org.openmrs.Obs;
 //import org.openmrs.Patient;
 //import org.openmrs.api.context.Context;
-//import org.openmrs.module.ohricore.OhriCoreConstant;
 //
-//import java.io.BufferedReader;
-//import java.io.InputStreamReader;
-//import java.net.HttpURLConnection;
-//import java.net.URISyntaxException;
-//import java.net.URL;
 //import java.text.ParseException;
 //import java.text.SimpleDateFormat;
 //import java.util.ArrayList;
@@ -39,12 +32,11 @@
 //import static org.openmrs.module.ohricore.OhriCoreConstant.FHIR_OBS_VL_RESULT;
 //import static org.openmrs.module.ohricore.OhriCoreConstant.FHIR_REJECTED_OHRI_TASKS;
 //import static org.openmrs.module.ohricore.OhriCoreConstant.OHRI_ENCOUNTER_SYSTEM;
-//import static org.openmrs.module.ohricore.fhir.FhirClient.fetchFhirTasksThatAreCompletedOrRejected;
 //
 ///**
 // * @author smallGod date: 27/07/2022
 // */
-//public class FhirRemoteAccessHelper {
+//public class FhirRemoteAccessHelper2 {
 //
 //    protected final Log log = LogFactory.getLog(getClass());
 //
@@ -52,43 +44,10 @@
 //
 //    private String getRequest(String urlPath) throws Exception {
 //
-//        String line;
-//        BufferedReader reader;
-//        StringBuilder responseContent = new StringBuilder();
 //
-//        URL url = new URL(OhriCoreConstant.FHIR_SANDBOX_URL + urlPath);
-//        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//        conn.setRequestProperty("Authorization", "Custom test");
-//        conn.setRequestProperty("Content-Type", "application/fhir+json");
-//        conn.setRequestProperty("Accept", "application/json");
-//        conn.setRequestMethod("GET");
-//        conn.setConnectTimeout(5000);// 5 seconds
-//        conn.setReadTimeout(5000);
 //
-//        int status = conn.getResponseCode();
-//        System.out.println("FHIR Status: " + status);
-//
-//        if (status >= 300) {
-//            reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-//            while ((line = reader.readLine()) != null) {
-//                responseContent.append(line);
-//            }
-//        } else {
-//            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//            while ((line = reader.readLine()) != null) {
-//                responseContent.append(line);
-//            }
-//        }
-//        reader.close();
 //        return responseContent.toString().trim();
 //    }
-//
-//    public void fetchTasks() throws URISyntaxException {
-//
-//        Bundle tasks = fetchFhirTasksThatAreCompletedOrRejected();
-//    }
-//
-//
 //
 //    public void fetchRejectedLabResults() {
 //

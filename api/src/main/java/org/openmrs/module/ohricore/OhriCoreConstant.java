@@ -27,7 +27,19 @@ public final class OhriCoreConstant {
 	
 	public static final String FHIR_OBS_VL_RESULT = "VL-MOST-RECENT-TEST-RESULT";
 	
+	public static final String FHIR_OBS_COVID_RESULT = "COVID-TEST-RESULT";
+	
 	public static final String CONCEPT_VL_RESULT = "856AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+	
+	public static final String CONCEPT_COVID_RESULT_ANTIGEN = "cbcbb029-f11f-4437-9d53-1d0f0a170433";
+	
+	public static final String CONCEPT_COVID_RESULT_PCR = "3f4ee14b-b4ab-4597-9fe9-406883b63d76";
+	
+	public static final String POSITIVE = "6378487b-584d-4422-a6a6-56c8830873ff";
+	
+	public static final String NEGATIVE = "6378487b-584d-4422-a6a6-56c8830873ff";
+	
+	public static final String INCONCLUSIVE = "6378487b-584d-4422-a6a6-56c8830873ff";
 	
 	public static final String CONCEPT_VL_RESULT_DETECTION = "1305AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	
@@ -36,6 +48,8 @@ public final class OhriCoreConstant {
 	public static final String CONCEPT_VL_RESULT_DETECTED = "1301AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	
 	public static final String CONCEPT_VL_RESULT_DATE = "163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+	
+	public static final String CONCEPT_COVID_RESULT_DATE = "163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	
 	public static final String CONCEPT_VL_SAMPLE_REJECTED = "c1ec84ed-f9df-4ea1-b58b-2381457c3848";
 	
@@ -53,6 +67,11 @@ public final class OhriCoreConstant {
 	
 	public static final String CONCEPT_TEST_PATIENT_TWO = "704c58ac-b7c2-44d2-b20e-1ff985bbadba"; //Abert Einstein
 	
-	public static final String OHRI_ENCOUNTER_SYSTEM_IDENTIFIER = "OHRI_ENCOUNTER_UUID";
+	public static final String OHRI_ENCOUNTER_SYSTEM = "OHRI_ENCOUNTER_UUID";
 	
+	public static final String GP_PARENT_SERVER_URL = "ohricore.fhir.sandbox.url";
+	
+	public static final String GP_PARENT_SERVER_USERNAME = "";
+	
+	public static final String GP_PARENT_SERVER_PASSWORD = "";
 }
