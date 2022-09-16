@@ -1,6 +1,5 @@
 package org.openmrs.module.ohricore.task;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.ohricore.fhir.FhirProcessor;
