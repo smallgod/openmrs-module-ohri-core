@@ -29,6 +29,10 @@ public final class OhriCoreConstant {
 	
 	public static final String FHIR_OBS_COVID_RESULT = "COVID-MOST-RECENT-TEST-RESULT";
 	
+	public static final String FHIR_OBS_COVID_RESULT_PCR = "94745-7";
+	
+	public static final String FHIR_OBS_COVID_RESULT_ANTIGEN = "94558-4";
+	
 	public static final String CONCEPT_VL_RESULT = "856AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	
 	public static final String CONCEPT_VL_RESULT_DETECTION = "1305AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";

@@ -47,6 +47,8 @@ import static org.openmrs.module.ohricore.OhriCoreConstant.CONCEPT_VL_RESULT;
 import static org.openmrs.module.ohricore.OhriCoreConstant.CONCEPT_VL_RESULT_DATE;
 import static org.openmrs.module.ohricore.OhriCoreConstant.CONCEPT_YES;
 import static org.openmrs.module.ohricore.OhriCoreConstant.FHIR_OBS_COVID_RESULT;
+import static org.openmrs.module.ohricore.OhriCoreConstant.FHIR_OBS_COVID_RESULT_ANTIGEN;
+import static org.openmrs.module.ohricore.OhriCoreConstant.FHIR_OBS_COVID_RESULT_PCR;
 import static org.openmrs.module.ohricore.OhriCoreConstant.FHIR_OBS_VL_RESULT;
 import static org.openmrs.module.ohricore.OhriCoreConstant.OHRI_ENCOUNTER_SYSTEM;
 import static org.openmrs.module.ohricore.fhir.FhirClient.CTX;
@@ -81,6 +83,7 @@ public class FhirProcessor {
 	
 	public void fetchCompletedLabResults() throws URISyntaxException {
 		Map<String, List<Obs>> completedObsResults = getCompletedTaskObs();
+		System.out.println("Number of Encounters from DISI: " + completedObsResults.size() + " (same as tasks)");
 		saveOrUpdateObs(completedObsResults);
 	}
 	
@@ -107,6 +110,7 @@ public class FhirProcessor {
             System.out.println("Person ID     : " + encounter.getPatient().getPatientId());
             System.out.println("Encounter UUID: " + encounterUuid);
             System.out.println("Obs Count     : " + entry.getValue().size());
+            System.out.println("---------------");
 
             Set<Obs> savedObs = Context.getEncounterService()
                     .getEncounterByUuid(encounterUuid).getObs();
@@ -118,15 +122,17 @@ public class FhirProcessor {
                 System.out.println("Concept Name  : " + obsToSave.getConcept().getName());
                 System.out.println("Concept UUID  : " + obsToSave.getConcept().getUuid());
                 System.out.println("Concept ID    : " + obsToSave.getConcept().getId());
+                System.out.println("-------");
 
                 if (obsStream.get().anyMatch(obs -> obs.getConcept().equals(obsToSave.getConcept()))) {
                     System.out.println("Alert! Obs concept Exists, NOT saving...");
                     continue;
                 }
                 Context.getObsService().saveObs(obsToSave, "Fetched from DISI");
-                System.out.println("---------------------------");
+                System.out.println("-------");
             }
             System.out.println("===================== Save Obs - END ======================");
+            System.out.println();
         }
     }
 	
@@ -166,6 +172,8 @@ public class FhirProcessor {
 
                     //Fetch a Diagnostic Report containing Observation references
                     DiagnosticReport diagnosticReport = fetchFhirDiagnosticReport(diagnosticReportId);
+                    System.out.println("DiagnosticReport: " + CTX.newJsonParser().encodeResourceToString(diagnosticReport));
+
                     List<String> obsIdList = new ArrayList<>();
                     for (Reference obsReference : diagnosticReport.getResult()) {
                         String urlRef = obsReference.getReference();
@@ -174,7 +182,10 @@ public class FhirProcessor {
 
                     for (String obsId : obsIdList) {
                         Observation obs = fetchFhirObservation(obsId);
+                        System.out.println("Observation: " + CTX.newJsonParser().encodeResourceToString(obs));
+
                         List<Obs> obsFound = findObs(patient, encounter, obs);
+                        System.out.println("Obs found: " + obsFound.size());
                         patientEncounterObs.merge(
                                 encounter.getUuid(),
                                 obsFound,
@@ -285,10 +296,12 @@ public class FhirProcessor {
 				return readVlObsHelper(patient, encounter, fhirObs, resultDate);
 				
 			case FHIR_OBS_COVID_RESULT:
+			case FHIR_OBS_COVID_RESULT_PCR:
+			case FHIR_OBS_COVID_RESULT_ANTIGEN:
 				return readCovidObsHelper(patient, encounter, fhirObs, resultDate);
 				
-				//case FHIR_OBS_HIV_RESULT:
-				//	return readCovidObsHelper(patient, encounter, resultValue, resultDate);
+				// case FHIR_OBS_HIV_RESULT:
+				// return readCovidObsHelper(patient, encounter, resultValue, resultDate);
 		}
 		return Collections.emptyList();
 	}
