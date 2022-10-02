@@ -17,11 +17,12 @@ import org.openmrs.api.context.Context;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -84,7 +85,7 @@ public class FhirProcessor {
 	public void fetchCompletedLabResults() throws URISyntaxException {
 		Map<String, List<Obs>> completedObsResults = getCompletedTaskObs();
 		System.out.println("Number of Encounters from DISI: " + completedObsResults.size() + " (same as tasks)");
-		saveOrUpdateObs(completedObsResults);
+		saveObs(completedObsResults);
 	}
 	
 	public void fetchRejectedLoadRequests() throws URISyntaxException {
@@ -97,43 +98,58 @@ public class FhirProcessor {
 		}
 	}
 	
-	private void saveOrUpdateObs(Map<String, List<Obs>> observationsMap) {
+	private void saveObs(Map<String, List<Obs>> observationsMap) {
+		for (Map.Entry<String, List<Obs>> obsToSave : observationsMap.entrySet()) {
+			saveObsHelper(obsToSave.getKey(), obsToSave.getValue());
+		}
+	}
+	
+	private void saveObsHelper(String encounterUuid, List<Obs> obsToSaveList) {
 
-        for (Map.Entry<String, List<Obs>> entry : observationsMap.entrySet()) {
+        Encounter encounter = Context.getEncounterService()
+                .getEncounterByUuid(encounterUuid);
 
-            System.out.println("==================== Save Obs - START ====================");
+        System.out.println("==================== Save Obs - START ====================");
+        System.out.println("Person ID     : " + encounter.getPatient().getPatientId());
+        System.out.println("Encounter UUID: " + encounterUuid);
+        System.out.println("Obs Count     : " + obsToSaveList.size());
+        System.out.println("--------------");
 
-            String encounterUuid = entry.getKey();
-            Encounter encounter = Context.getEncounterService()
-                    .getEncounterByUuid(encounterUuid);
+        Supplier<Stream<Obs>> savedObsStream = Context.getEncounterService()
+                .getEncounterByUuid(encounterUuid).getObs()::stream;
 
-            System.out.println("Person ID     : " + encounter.getPatient().getPatientId());
-            System.out.println("Encounter UUID: " + encounterUuid);
-            System.out.println("Obs Count     : " + entry.getValue().size());
-            System.out.println("---------------");
+        for (Obs obsToSave : obsToSaveList) {
 
-            Set<Obs> savedObs = Context.getEncounterService()
-                    .getEncounterByUuid(encounterUuid).getObs();
+            System.out.println("Concept Name  : " + obsToSave.getConcept().getName());
+            System.out.println("Concept UUID  : " + obsToSave.getConcept().getUuid());
+            System.out.println("Concept ID    : " + obsToSave.getConcept().getId());
+            System.out.println("-------");
 
-            Supplier<Stream<Obs>> obsStream = savedObs::stream;
-
-            for (Obs obsToSave : entry.getValue()) {
-
-                System.out.println("Concept Name  : " + obsToSave.getConcept().getName());
-                System.out.println("Concept UUID  : " + obsToSave.getConcept().getUuid());
-                System.out.println("Concept ID    : " + obsToSave.getConcept().getId());
-                System.out.println("-------");
-
-                if (obsStream.get().anyMatch(obs -> obs.getConcept().equals(obsToSave.getConcept()))) {
-                    System.out.println("Alert! Obs concept Exists, NOT saving...");
-                    continue;
-                }
-                Context.getObsService().saveObs(obsToSave, "Fetched from DISI");
-                System.out.println("-------");
+            Obs savedObs = getSavedObsToAmendable(obsToSave, savedObsStream);
+            if (savedObs == null) {
+                System.out.println("Alert! Obs concept Exists, NOT saving...");
+                continue;
             }
-            System.out.println("===================== Save Obs - END ======================");
-            System.out.println();
+            //Obs newObs = Obs.newInstance(oldObs); //copies values from oldObs
+            obsToSave.setPreviousVersion(savedObs);
+            Context.getObsService().saveObs(obsToSave, "Result from Lab (DISI)");
+            Context.getObsService().voidObs(savedObs, "Updated with Lab Results (DISI)");
         }
+
+        System.out.println("===================== Save Obs - END ======================");
+        System.out.println();
+    }
+	
+	private Obs getSavedObsToAmendable(final Obs obsToSave, Supplier<Stream<Obs>> savedObsStream) {
+
+        Comparator<Obs> obsIdComparator = Comparator.comparing(Obs::getId);
+        System.out.println("obsToSave value: " + obsToSave.getValueAsString(Locale.ENGLISH));
+        return savedObsStream.get()
+                .filter(savedObs -> !savedObs.getVoided())
+                .filter(savedObs -> savedObs.getConcept().equals(obsToSave.getConcept()))
+                .filter(savedObs -> !savedObs.getValueAsString(Locale.ENGLISH).equals(obsToSave.getValueAsString(Locale.ENGLISH)))
+                .max(obsIdComparator)
+                .orElse(null);
     }
 	
 	private Map<String, List<Obs>> getCompletedTaskObs() throws URISyntaxException {
