@@ -13,6 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.openmrs.api.context.Context;
+import org.openmrs.api.db.ContextDAO;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ohricore.task.QueryLabResultsTask;
 import org.openmrs.scheduler.SchedulerService;
@@ -35,7 +36,9 @@ public class OHRICoreActivator extends BaseModuleActivator {
 	 * @see #started()
 	 */
 	public void started() {
-		
+		ContextDAO contextDAO = (ContextDAO) Context.getRegisteredComponents(ContextDAO.class).get(0);
+		// Refresh Lucene indexes
+		contextDAO.updateSearchIndex();
 		log.info("Started OHRICore");
 	}
 	
