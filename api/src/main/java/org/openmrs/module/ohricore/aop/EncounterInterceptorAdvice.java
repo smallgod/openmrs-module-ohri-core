@@ -45,9 +45,10 @@ public class EncounterInterceptorAdvice implements AfterReturningAdvice {
 
         try {
             if (methodInvoked.getName().equals(ConceptComputeTrigger.SAVE_ENCOUNTER)) {
+
                 for (Object arg : methodArgs) {
                     if (arg instanceof Encounter) {
-                    
+
                         Encounter encounter = (Encounter) arg;
 
                         List<OHRIComputedConcept> ohriComputedConcepts = OHRIComputedConceptsFactory.getComputedConcepts(encounter);
