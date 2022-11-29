@@ -45,6 +45,7 @@ public class EncounterInterceptorAdvice implements AfterReturningAdvice {
                     if (arg instanceof Encounter) {
 
                         Encounter encounter = (Encounter) arg;
+
                         List<OHRIComputedConcept> ohriComputedConcepts = OHRIComputedConceptsFactory.getComputedConcepts(encounter);
 
                         for (OHRIComputedConcept computedConcept : ohriComputedConcepts) {
