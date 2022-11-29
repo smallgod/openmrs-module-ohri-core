@@ -45,8 +45,7 @@ public class EncounterInterceptorAdvice implements AfterReturningAdvice {
                     if (arg instanceof Encounter) {
 
                         Encounter encounter = (Encounter) arg;
-                        List<OHRIComputedConcept> ohriComputedConcepts
-                                = OHRIComputedConceptsFactory.getComputedConcepts(encounter);
+                        List<OHRIComputedConcept> ohriComputedConcepts = OHRIComputedConceptsFactory.getComputedConcepts(encounter);
 
                         for (OHRIComputedConcept computedConcept : ohriComputedConcepts) {
                             //computedConcept.computeAndPersistObs(encounter); //Disable computed obs here: SG - Sept.11.2022
