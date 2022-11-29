@@ -85,83 +85,23 @@ public class FhirProcessor {
     private static final Comparator<Obs> OBS_ID_COMPARATOR = Comparator.comparing(Obs::getId);
 
     public void fetchCompletedLabResults() throws URISyntaxException {
+
         Map<String, List<Obs>> completedObsResults = getCompletedTaskObs();
         System.out.println("Number of Encounters from DISI: " + completedObsResults.size() + " (same as tasks)");
         saveObs(completedObsResults);
     }
 
     public void fetchRejectedLoadRequests() throws URISyntaxException {
-        try {
-            //Map<PatientEncounter, List<Obs>> rejectedResults= getRejectedRequestObs();
-            //saveOrUpdateObs(failedResults);
-        } catch (Exception e) {
-            System.out.println();
-        }
+
+        Map<String, List<Obs>> rejectedResults = getRejectedRequestObs();
+        System.out.println("Number of Encounters from DISI: " + rejectedResults.size() + " (same as tasks)");
+        saveObs(rejectedResults);
     }
 
     private void saveObs(Map<String, List<Obs>> observationsMap) {
         for (Map.Entry<String, List<Obs>> obsToSave : observationsMap.entrySet()) {
             saveObsHelper(obsToSave.getKey(), obsToSave.getValue());
         }
-    }
-
-    private void saveObsHelper(String encounterUuid, List<Obs> obsToSaveList) {
-
-        Encounter encounter = Context.getEncounterService()
-                .getEncounterByUuid(encounterUuid);
-
-        System.out.println("==================== Save Obs - START ====================");
-        System.out.println("Person ID     : " + encounter.getPatient().getPatientId());
-        System.out.println("Person Name   : " + encounter.getPatient().getGivenName() + encounter.getPatient().getFamilyName());
-        System.out.println("Encounter UUID: " + encounterUuid);
-        System.out.println("Obs Count     : " + obsToSaveList.size());
-        System.out.println("--------------");
-
-        Supplier<Stream<Obs>> savedObsStream = Context.getEncounterService()
-                .getEncounterByUuid(encounterUuid).getObs()::stream;
-
-        for (Obs obsToSave : obsToSaveList) {
-
-            System.out.println("Concept Name  : " + obsToSave.getConcept().getName());
-            System.out.println("Concept UUID  : " + obsToSave.getConcept().getUuid());
-            System.out.println("Concept ID    : " + obsToSave.getConcept().getId());
-            System.out.println("--------------");
-
-            if (isObsExists(obsToSave, savedObsStream)) {
-
-                Obs savedObs = getSavedObsToAmend(obsToSave, savedObsStream);
-                if (savedObs == null) {
-                    System.out.println("Alert! Similar Obs with value Exists, NOT saving...");
-                    continue;
-                }
-                //Obs newObs = Obs.newInstance(oldObs); //copies values from oldObs
-                obsToSave.setPreviousVersion(savedObs);
-                Context.getObsService().saveObs(obsToSave, "Lab Test Results (DISI)");
-                Context.getObsService().voidObs(savedObs, "Updated with Lab Test Results (DISI)");
-
-            } else {
-                Context.getObsService().saveObs(obsToSave, "Lab Test Results Test(DISI)");
-            }
-        }
-        System.out.println("===================== Save Obs - END ======================");
-        System.out.println();
-    }
-
-    private boolean isObsExists(final Obs obsToSave, Supplier<Stream<Obs>> savedObsStream) {
-
-        return savedObsStream
-                .get()
-                .anyMatch(savedObs -> savedObs.getConcept().equals(obsToSave.getConcept()));
-    }
-
-    private Obs getSavedObsToAmend(final Obs obsToSave, Supplier<Stream<Obs>> savedObsStream) {
-
-        return savedObsStream.get()
-                .filter(savedObs -> !savedObs.getVoided())
-                .filter(savedObs -> savedObs.getConcept().equals(obsToSave.getConcept()))
-                .filter(savedObs -> !savedObs.getValueAsString(Locale.ENGLISH).equals(obsToSave.getValueAsString(Locale.ENGLISH)))
-                .max(OBS_ID_COMPARATOR)
-                .orElse(null);
     }
 
     private Map<String, List<Obs>> getCompletedTaskObs() throws URISyntaxException {
@@ -228,12 +168,13 @@ public class FhirProcessor {
         return patientEncounterObs;
     }
 
-    private List<Obs> getRejectedRequestObs() throws URISyntaxException {
+    private Map<String, List<Obs>> getRejectedRequestObs() throws URISyntaxException {
 
-        List<Obs> observations = new ArrayList<>();
+        Map<String, List<Obs>> patientEncounterObs = new ConcurrentHashMap<>();
         Bundle taskBundle = fetchFhirTasksThatAreRejected();
+
         List<Bundle.BundleEntryComponent> bundleEntryComponents = taskBundle.getEntry();
-        System.out.println("Running processFhirObs(): size - " + bundleEntryComponents.size());
+        System.out.println("Number of completed Tasks from DISI: " + bundleEntryComponents.size());
 
         for (Bundle.BundleEntryComponent bundleEntry : bundleEntryComponents) {
 
@@ -241,21 +182,13 @@ public class FhirProcessor {
             System.out.println("Task: " + CTX.newJsonParser().encodeResourceToString(task));
 
             //Get the Encounter & Patient Details
-            org.openmrs.Patient patient = null;
-            Encounter encounter = null;
-            for (Identifier identifier : task.getIdentifier()) {
+            Encounter encounter = getOhriEncounterFromDisi(task);
 
-                if (identifier.getSystem().equals(OHRI_ENCOUNTER_SYSTEM)) {
-
-                    String encounterUuid = identifier.getValue();
-                    System.out.println("Encounter UUID: " + encounterUuid);
-                    encounter = Context.getEncounterService().getEncounterByUuid(encounterUuid);
-                    patient = encounter.getPatient();
-                }
-            }
-            System.out.println("Patient  : " + patient);
-
-            if (patient != null) {
+            List<Obs> observations = new ArrayList<>();
+            if (encounter == null) {
+                System.out.println("Failed to find an Encounter from a DISI Task Result. " +
+                        "Make sure the 'OHRI_ENCOUNTER_UUID' tag is part of this Task (when submitting Lab Results)");
+            } else {
 
                 List<Coding> coding = task.getStatusReason().getCoding();
                 String display = coding.get(0).getDisplay();
@@ -263,6 +196,8 @@ public class FhirProcessor {
                 Date lastModified = task.getLastModifiedElement().getValue();
 
                 Concept rejectionReasonConcept = Context.getConceptService().getConceptByMapping(code, CONCEPT_MAPPING_CIEL);
+
+                org.openmrs.Patient patient = encounter.getPatient();
 
                 //Was Test Performed - False
                 Obs testPerformedObs = createObs(patient, conceptTestPerformed, encounter);
@@ -289,9 +224,18 @@ public class FhirProcessor {
                 observations.add(labOrderStatusNotDoneObs);
                 observations.add(labOrderStatusNotDoneReasonObs);
                 observations.add(obs);
+
+                patientEncounterObs.merge(
+                        encounter.getUuid(),
+                        observations,
+                        (prevList, newList) -> {
+                            prevList.addAll(newList);
+                            return prevList;
+                        }
+                );
             }
         }
-        return observations;
+        return patientEncounterObs;
     }
 
     private static Encounter getOhriEncounterFromDisi(Task task) {
@@ -428,6 +372,65 @@ public class FhirProcessor {
                         .findAny()
                         .map((concept) -> Context.getConceptService().getConceptByUuid(CONCEPT_COVID_RESULT_PCR))
                         .orElse(null));
+    }
+
+    private void saveObsHelper(String encounterUuid, List<Obs> obsToSaveList) {
+
+        Encounter encounter = Context.getEncounterService()
+                .getEncounterByUuid(encounterUuid);
+
+        System.out.println("==================== Save Obs - START ====================");
+        System.out.println("Person ID     : " + encounter.getPatient().getPatientId());
+        System.out.println("Person Name   : " + encounter.getPatient().getGivenName() + ", " + encounter.getPatient().getFamilyName());
+        System.out.println("Encounter UUID: " + encounterUuid);
+        System.out.println("Obs Count     : " + obsToSaveList.size());
+        System.out.println("--------------");
+
+        Supplier<Stream<Obs>> savedObsStream = Context.getEncounterService()
+                .getEncounterByUuid(encounterUuid).getObs()::stream;
+
+        for (Obs obsToSave : obsToSaveList) {
+
+            System.out.println("Concept Name  : " + obsToSave.getConcept().getName());
+            System.out.println("Concept UUID  : " + obsToSave.getConcept().getUuid());
+            System.out.println("Concept ID    : " + obsToSave.getConcept().getId());
+
+            if (isObsExists(obsToSave, savedObsStream)) {
+
+                Obs savedObs = getSavedObsToAmend(obsToSave, savedObsStream);
+                if (savedObs == null) {
+                    System.out.println("Alert! Similar Obs with value Exists, NOT saving...");
+                    continue;
+                }
+                //Obs newObs = Obs.newInstance(oldObs); //copies values from oldObs
+                obsToSave.setPreviousVersion(savedObs);
+                Context.getObsService().saveObs(obsToSave, "Lab Test Results (DISI)");
+                Context.getObsService().voidObs(savedObs, "Updated with Lab Test Results (DISI)");
+
+            } else {
+                Context.getObsService().saveObs(obsToSave, "Lab Test Results Test(DISI)");
+            }
+            System.out.println("--------------");
+        }
+        System.out.println("===================== Save Obs - END ======================");
+        System.out.println();
+    }
+
+    private boolean isObsExists(final Obs obsToSave, Supplier<Stream<Obs>> savedObsStream) {
+
+        return savedObsStream
+                .get()
+                .anyMatch(savedObs -> savedObs.getConcept().equals(obsToSave.getConcept()));
+    }
+
+    private Obs getSavedObsToAmend(final Obs obsToSave, Supplier<Stream<Obs>> savedObsStream) {
+
+        return savedObsStream.get()
+                .filter(savedObs -> !savedObs.getVoided())
+                .filter(savedObs -> savedObs.getConcept().equals(obsToSave.getConcept()))
+                .filter(savedObs -> !savedObs.getValueAsString(Locale.ENGLISH).equals(obsToSave.getValueAsString(Locale.ENGLISH)))
+                .max(OBS_ID_COMPARATOR)
+                .orElse(null);
     }
 
     private Obs createObs(org.openmrs.Patient patient, Concept concept, Encounter encounter) {
