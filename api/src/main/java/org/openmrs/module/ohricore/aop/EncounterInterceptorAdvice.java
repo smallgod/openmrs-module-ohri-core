@@ -7,6 +7,10 @@ import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ohricore.api.OHRIComputedConcept;
 import org.openmrs.module.ohricore.engine.CommonsUUID;
+
+import org.openmrs.Encounter;
+import org.openmrs.module.ohricore.api.OHRIComputedConcept;
+
 import org.openmrs.module.ohricore.engine.ConceptComputeTrigger;
 import org.openmrs.module.ohricore.engine.OHRIComputedConceptsFactory;
 import org.slf4j.Logger;
@@ -14,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.AfterReturningAdvice;
 
 import java.lang.reflect.Method;
+
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
