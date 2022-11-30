@@ -4,6 +4,8 @@ package org.openmrs.module.ohricore;
  * @author smallGod date: 27/07/2022
  */
 public final class OhriCoreConstant {
+
+	public final static String MANAGE_ORDER_TEMPLATES = "Manage OrderTemplates";
 	
 	public static final String MUTEX_QUERY_LABRESULTS = "QUERY LAB RESULTS MUTEX";
 	

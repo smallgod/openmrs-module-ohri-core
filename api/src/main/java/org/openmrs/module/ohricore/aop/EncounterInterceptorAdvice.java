@@ -53,7 +53,7 @@ public class EncounterInterceptorAdvice implements AfterReturningAdvice {
 
                         List<OHRIComputedConcept> ohriComputedConcepts = OHRIComputedConceptsFactory.getComputedConcepts(encounter);
                         for (OHRIComputedConcept computedConcept : ohriComputedConcepts) {
-                            computedConcept.computeAndPersistObs(encounter);
+                            //computedConcept.computeAndPersistObs(encounter); //Disable computed obs here: SG - Sept.11.2022
                         }
 
                         //TODO: Re-factor this code into a separate neat file

@@ -6,4 +6,5 @@ package org.openmrs.module.ohricore.engine;
 public final class ConceptComputeTrigger {
 	
 	public static final String SAVE_ENCOUNTER = "saveEncounter";
+	public static final String SAVE_PATIENT = "savePatient";
 }
