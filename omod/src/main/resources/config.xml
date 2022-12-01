@@ -53,8 +53,8 @@
 	</advice>
 
 	<advice>
-		<point>org.openmrs.api.EncounterService</point>
-		<class>org.openmrs.module.ohricore.aop.EncounterInterceptorAdvice</class>
+		<point>org.openmrs.api.PatientService</point>
+		<class>org.openmrs.module.ohricore.aop.PatientInterceptorAdvice</class>
 	</advice>
 
 <!--	<advice>-->

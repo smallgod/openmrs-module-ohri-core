@@ -4,7 +4,7 @@ package org.openmrs.module.ohricore;
  * @author smallGod date: 27/07/2022
  */
 public final class OhriCoreConstant {
-
+	
 	public final static String MANAGE_ORDER_TEMPLATES = "Manage OrderTemplates";
 	
 	public static final String MUTEX_QUERY_LABRESULTS = "QUERY LAB RESULTS MUTEX";
@@ -72,6 +72,12 @@ public final class OhriCoreConstant {
 	public static final String GP_PARENT_SERVER_URL = "ohricore.fhir.sandbox.url";
 	
 	public static final String GP_PARENT_SERVER_USERNAME = "";
+	
+	public static final String GP_MPI_SERVER_URL = "ohricore.mpi.namibia.server.url";
+	
+	public static final String GP_MPI_CLIENT_ID = "ohricore.mpi.namibia.server.clientid";
+	
+	public static final String GP_MPI_CLIENT_SECRET = "ohricore.mpi.namibia.server.clientsecret";
 	
 	public static final String CONCEPT_MAPPING_CIEL = "CIEL";
 	

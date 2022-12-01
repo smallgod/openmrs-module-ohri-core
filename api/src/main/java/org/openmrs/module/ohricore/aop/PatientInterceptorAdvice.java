@@ -21,19 +21,21 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author smallGod
- * date: 30/11/2022
+ * @author smallGod date: 30/11/2022
  */
 public class PatientInterceptorAdvice implements AfterReturningAdvice {
-
-    private static final Logger log = LoggerFactory.getLogger(PatientInterceptorAdvice.class);
-
-    @Override
+	
+	private static final Logger log = LoggerFactory.getLogger(PatientInterceptorAdvice.class);
+	
+	@Override
     public void afterReturning(Object returnValue, Method methodInvoked, Object[] methodArgs, Object target)
             throws Throwable {
 
+        System.out.println("After returning Patient Save in EMR");
         try {
             if (methodInvoked.getName().equals(ConceptComputeTrigger.SAVE_PATIENT)) {
+
+                System.out.println("Save Patient method()...");
 
                 for (Object arg : methodArgs) {
                     if (arg instanceof org.openmrs.Patient) {
@@ -89,13 +91,17 @@ public class PatientInterceptorAdvice implements AfterReturningAdvice {
                         newPatient.setBirthDate(patient.getBirthdate());
                         newPatient.setAddress(addresses);
 
-                        String response = FhirClient.postFhirResource(newPatient);
-                        System.out.println("Patient registered: " + response);
+
+                        System.out.println("Patient: " + newPatient);
+                        //String response = FhirClient.postMPIRequest(newPatient);
+                        FhirClient.postPatient(newPatient);
+                        //System.out.println("Patient registered: " + response);
                     }
                 }
             }
         } catch (Exception e) {
-            log.error("An un-expected Error occurred while registering a patient");
+            log.error("An un-expected Error occurred while registering a patient: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
