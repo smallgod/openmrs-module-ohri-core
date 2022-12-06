@@ -6,8 +6,11 @@ import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.StringType;
+import org.openmrs.Location;
 import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAddress;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.ohricore.engine.ConceptComputeTrigger;
 import org.openmrs.module.ohricore.fhir.FhirClient;
 import org.slf4j.Logger;
@@ -78,9 +81,9 @@ public class PatientInterceptorAdvice implements AfterReturningAdvice {
 
                         List<PatientIdentifier> patientIds = patient.getActiveIdentifiers();
                         List<Identifier> identifiers = new ArrayList<>();
-                        for(PatientIdentifier id: patientIds){
+                        for (PatientIdentifier id : patientIds) {
                             Identifier identifier = new Identifier();
-                            identifier.setSystem("urn:oid:4.0");//TODO: don't hardcode
+                            identifier.setSystem("urn:oid:3.9");//TODO: don't hardcode
                             identifier.setValue(id.getIdentifier());
                             identifiers.add(identifier);
                         }
@@ -91,11 +94,12 @@ public class PatientInterceptorAdvice implements AfterReturningAdvice {
                         newPatient.setBirthDate(patient.getBirthdate());
                         newPatient.setAddress(addresses);
 
-
-                        System.out.println("Patient: " + newPatient);
                         //String response = FhirClient.postMPIRequest(newPatient);
-                        FhirClient.postPatient(newPatient);
-                        //System.out.println("Patient registered: " + response);
+                        List<PatientIdentifier> newPatientIds = FhirClient.postPatient(newPatient);
+                        for (PatientIdentifier patientId : newPatientIds) {
+                            patientId.setPatient(patient);
+                            Context.getPatientService().savePatientIdentifier(patientId);
+                        }
                     }
                 }
             }

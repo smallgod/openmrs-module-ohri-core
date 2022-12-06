@@ -11,6 +11,9 @@ import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.Task;
+import org.openmrs.Location;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ohricore.OhriCoreConstant;
 import org.openmrs.module.ohricore.Token;
@@ -33,11 +36,15 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.List;
 
 import static org.openmrs.module.ohricore.OhriCoreConstant.FHIR_OBS_VL_RESULT;
+import static org.openmrs.module.ohricore.OhriCoreConstant.HEALTH_ID_SYSTEM;
+import static org.openmrs.module.ohricore.OhriCoreConstant.NATIONAL_ID_SYSTEM;
 import static org.openmrs.module.ohricore.OhriCoreConstant.OHRI_ENCOUNTER_SYSTEM;
 
 /**
@@ -121,7 +128,6 @@ public class FhirClient {
 			conn.setReadTimeout(5000);
 			
 			int status = conn.getResponseCode();
-			System.out.println(" Status: " + status);
 			
 			if (status >= 300) {
 				reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
@@ -136,22 +142,6 @@ public class FhirClient {
 			}
 			reader.close();
 			
-			//        HttpHeaders headers = new HttpHeaders();
-			//        //headers.setContentType(MediaType.APPLICATION_JSON);
-			//        headers.add("client_id", clientId);
-			//        headers.add("client_secret", clientSecret);
-			//        headers.add("grant_type", "client_credentials");
-			//
-			//        HttpEntity<String> request = new HttpEntity<>(headers);
-			//
-			//
-			//
-			//            ResponseEntity<String> response = new RestTemplate()
-			//                    .postForEntity(new URI(url), request, String.class);
-			//
-			//            System.out.println("Response: " + response.getBody());
-			//
-			//            JSONObject root = new JSONObject(response.getBody());
 			JSONObject root = new JSONObject(responseContent.toString().trim());
 			bearer = root.getString("access_token");
 			
@@ -163,7 +153,9 @@ public class FhirClient {
 		return bearer;
 	}
 	
-	public static void postPatient(Patient newPatient) {
+	public static List<PatientIdentifier> postPatient(Patient newPatient) {
+
+        List<PatientIdentifier> patientIds = new ArrayList<>();
 
         try {
 
@@ -172,61 +164,38 @@ public class FhirClient {
             String clientSecret = Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_MPI_CLIENT_SECRET);
 
             String bearer = getToken(url, clientId, clientSecret);
-
-            System.out.println("bearer: " + bearer);
-
-            URI uri = new URI(url);
-
-
-//            String patient = "{\n" +
-//                    "  \"resourceType\": \"Patient\",\n" +
-//                    "  \"gender\": \"male\",\n" +
-//                    "  \"identifier\": [\n" +
-//                    "    {\n" +
-//                    "      \"system\": \"urn:oid:4.0\",\n" +
-//                    "      \"value\": \"4968689761\"\n" +
-//                    "    }\n" +
-//                    "  ],\n" +
-//                    "  \"name\": [\n" +
-//                    "    {\n" +
-//                    "      \"family\": \"Byakatonda\",\n" +
-//                    "      \"given\": \"Chris\",\n" +
-//                    "      \"use\": \"usual\"\n" +
-//                    "    }\n" +
-//                    "  ],\n" +
-//                    "  \"birthDate\": \"1990-11-23\",\n" +
-//                    "  \"address\": [\n" +
-//                    "    {\n" +
-//                    "      \"use\": \"home\",\n" +
-//                    "      \"country\": \"Uganda\"\n" +
-//                    "    }\n" +
-//                    "  ]\n" +
-//                    "}";
-
-			String patient = CTX.newJsonParser().encodeResourceToString(newPatient);
-
+            String patient = CTX.newJsonParser().encodeResourceToString(newPatient);
             URI urlPath = new URI(Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_MPI_SERVER_URL) + "/Patient");
 
             HttpHeaders headers = new HttpHeaders();
-            //headers.add("Authorization", "Basic " + base64Creds);
-            //headers.setContentType(MediaType.APPLICATION_JSON);
             headers.add("Authorization", "Bearer " + bearer);
             headers.add("Content-Type", "application/json");
-
-			System.out.println("about to post...");
 
             HttpEntity<String> request = new HttpEntity<>(patient, headers);
             ResponseEntity<String> response = new RestTemplate().postForEntity(urlPath, request, String.class);
 
-            System.out.println("Response: " + response.getBody());
-
             JSONObject root = new JSONObject(response.getBody().trim());
-            // bearer = root.getString("access_token");
+            JSONArray identifiers = root.getJSONArray("identifier");
+
+            for (int i = 0; i < identifiers.length(); i++) {
+
+                JSONObject identifier = identifiers.getJSONObject(i);
+                String system = identifier.getString("system");
+
+                if (system.equalsIgnoreCase(HEALTH_ID_SYSTEM)) {
+                    patientIds.add(new PatientIdentifier(
+                            identifier.getString("value"),
+                            Context.getPatientService().getPatientIdentifierType(7),
+                            Context.getLocationService().getDefaultLocation()));
+                }
+            }
 
         } catch (Exception exc) {
             System.err.println("Failed to get Token");
             exc.printStackTrace();
         }
+        System.out.println(patientIds);
+        return patientIds;
     }
 	
 	public static String postFhirResource(Resource resource) throws Exception {

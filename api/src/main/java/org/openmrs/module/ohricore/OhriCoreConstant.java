@@ -69,6 +69,10 @@ public final class OhriCoreConstant {
 	
 	public static final String OHRI_ENCOUNTER_SYSTEM = "OHRI_ENCOUNTER_UUID";
 	
+	public static final String NATIONAL_ID_SYSTEM = "http://ohie.org/National_ID";
+	
+	public static final String HEALTH_ID_SYSTEM = "http://ohie.org/Health_ID";
+	
 	public static final String GP_PARENT_SERVER_URL = "ohricore.fhir.sandbox.url";
 	
 	public static final String GP_PARENT_SERVER_USERNAME = "";
