@@ -19,9 +19,16 @@
   
 	<require_version>${openmrsPlatformVersion}</require_version>
 
+	<!-- Required Privileges  -->
+	<privilege>
+		<name>Get Patients</name>
+		<description>Base privilege for all External patient operations</description>
+	</privilege>
+
 	<!-- Required Modules -->
 	<require_modules>
 		<require_module version="${fhir2Version}">${project.parent.groupId}.fhir2</require_module>
+		<require_module>org.openmrs.module.webservices.rest</require_module>
 	</require_modules>
 	<!-- / Required Modules -->
 

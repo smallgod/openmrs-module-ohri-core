@@ -5,8 +5,6 @@ package org.openmrs.module.ohricore;
  */
 public final class OhriCoreConstant {
 	
-	public final static String MANAGE_ORDER_TEMPLATES = "Manage OrderTemplates";
-	
 	public static final String MUTEX_QUERY_LABRESULTS = "QUERY LAB RESULTS MUTEX";
 	
 	public static final String FHIR_SANDBOX_URL = "https://oh-route.gicsandbox.org/fhir";
@@ -72,6 +70,8 @@ public final class OhriCoreConstant {
 	public static final String NATIONAL_ID_SYSTEM = "http://ohie.org/National_ID";
 	
 	public static final String HEALTH_ID_SYSTEM = "http://ohie.org/Health_ID";
+	
+	public static final String HEALTH_FACILITY_ID_SYSTEM = "http://ohie.org/Health_Facility";
 	
 	public static final String GP_PARENT_SERVER_URL = "ohricore.fhir.sandbox.url";
 	

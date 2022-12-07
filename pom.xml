@@ -216,6 +216,7 @@
 
     <properties>
         <openmrsPlatformVersion>2.3.3</openmrsPlatformVersion>
+        <webservicesRestVersion>2.21.0</webservicesRestVersion>
         <fhir2Version>1.3.0</fhir2Version>
         <legacyUIomodVersion>1.8.2</legacyUIomodVersion>
         <junit5Version>5.7.2</junit5Version>

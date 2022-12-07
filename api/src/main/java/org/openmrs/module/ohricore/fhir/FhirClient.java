@@ -11,38 +11,35 @@ import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.Task;
-import org.openmrs.Location;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.openmrs.PatientIdentifier;
-import org.openmrs.PatientIdentifierType;
+import org.openmrs.Person;
+import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ohricore.OhriCoreConstant;
-import org.openmrs.module.ohricore.Token;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import static org.openmrs.module.ohricore.OhriCoreConstant.FHIR_OBS_VL_RESULT;
+import static org.openmrs.module.ohricore.OhriCoreConstant.HEALTH_FACILITY_ID_SYSTEM;
 import static org.openmrs.module.ohricore.OhriCoreConstant.HEALTH_ID_SYSTEM;
 import static org.openmrs.module.ohricore.OhriCoreConstant.NATIONAL_ID_SYSTEM;
 import static org.openmrs.module.ohricore.OhriCoreConstant.OHRI_ENCOUNTER_SYSTEM;
@@ -51,130 +48,257 @@ import static org.openmrs.module.ohricore.OhriCoreConstant.OHRI_ENCOUNTER_SYSTEM
  * @author Arthur D. Mugume, Amos date: 18/08/2022
  */
 public class FhirClient {
-	
-	static FhirContext CTX = FhirContext.forR4();
-	
-	static ObjectMapper mapper;
-	
-	static {
-		FhirClient.mapper = new ObjectMapper();
-		FhirClient.mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-	}
-	
-	public static IGenericClient getClient() throws URISyntaxException {
-		
-		String url = Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_PARENT_SERVER_URL);
-		String username = Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_PARENT_SERVER_USERNAME);
-		String password = Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_PARENT_SERVER_PASSWORD);
-		URI uri = new URI(url);
-		//URI uri = new URI(url + "/ws/fhir2/R4");
-		
-		String auth = username + ":" + password;
-		String base64Creds = Base64.getEncoder().encodeToString(auth.getBytes());
-		
-		IGenericClient client = CTX.newRestfulGenericClient(uri.toString());
-		AdditionalRequestHeadersInterceptor interceptor = new AdditionalRequestHeadersInterceptor();
-		// interceptor.addHeaderValue("Authorization", "Basic " + base64Creds);
-		interceptor.addHeaderValue("Authorization", "Custom test");
-		client.registerInterceptor(interceptor);
-		
-		return client;
-	}
-	
-	public static IGenericClient getMPIClient() throws URISyntaxException {
-		
-		String url = Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_MPI_SERVER_URL);
-		String clientId = Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_MPI_CLIENT_ID);
-		String clientSecret = Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_MPI_CLIENT_SECRET);
-		
-		String bearer = getToken(url, clientId, clientSecret);
-		
-		System.out.println("bearer: " + bearer);
-		
-		URI uri = new URI(url);
-		
-		//		FhirContext ctx = FhirContext.forR4();
-		//		// Set how long to try and establish the initial TCP connection (in ms)
-		//		ctx.getRestfulClientFactory().setConnectTimeout(20 * 1000);
-		//		// Set how long to block for individual read/write operations (in ms)
-		//		ctx.getRestfulClientFactory().setSocketTimeout(20 * 1000);
-		//		// Create the client
-		//		IGenericClient client = ctx.newRestfulGenericClient(url);
-		IGenericClient client = CTX.newRestfulGenericClient(uri.toString());
-		AdditionalRequestHeadersInterceptor interceptor = new AdditionalRequestHeadersInterceptor();
-		interceptor.addHeaderValue("Authorization", "Bearer " + bearer);
-		client.registerInterceptor(interceptor);
-		
-		return client;
-	}
-	
-	public static String getToken(String url, String clientId, String clientSecret) {
-		
-		String bearer = null;
-		try {
-			
-			String line;
-			BufferedReader reader;
-			StringBuilder responseContent = new StringBuilder();
-			
-			URL urlPath = new URL(url + "/auth");
-			HttpURLConnection conn = (HttpURLConnection) urlPath.openConnection();
-			conn.setRequestProperty("Accept", "*/*");
-			conn.setRequestProperty("client_id", clientId);
-			conn.setRequestProperty("client_secret", clientSecret);
-			conn.setRequestProperty("grant_type", "client_credentials");
-			conn.setRequestMethod("POST");
-			conn.setConnectTimeout(5000);// 5 seconds
-			conn.setReadTimeout(5000);
-			
-			int status = conn.getResponseCode();
-			
-			if (status >= 300) {
-				reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-				while ((line = reader.readLine()) != null) {
-					responseContent.append(line);
-				}
-			} else {
-				reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-				while ((line = reader.readLine()) != null) {
-					responseContent.append(line);
-				}
-			}
-			reader.close();
-			
-			JSONObject root = new JSONObject(responseContent.toString().trim());
-			bearer = root.getString("access_token");
-			
-		}
-		catch (Exception exc) {
-			System.err.println("Failed to get Token");
-			exc.printStackTrace();
-		}
-		return bearer;
-	}
-	
-	public static List<PatientIdentifier> postPatient(Patient newPatient) {
+
+    private static final String url = Context.getAdministrationService().getGlobalProperty(
+            OhriCoreConstant.GP_MPI_SERVER_URL);
+
+    private static final String clientId = Context.getAdministrationService().getGlobalProperty(
+            OhriCoreConstant.GP_MPI_CLIENT_ID);
+
+    private static final String clientSecret = Context.getAdministrationService().getGlobalProperty(
+            OhriCoreConstant.GP_MPI_CLIENT_SECRET);
+
+    private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
+    static FhirContext CTX = FhirContext.forR4();
+
+    static ObjectMapper mapper;
+
+    static {
+        FhirClient.mapper = new ObjectMapper();
+        FhirClient.mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
+    }
+
+    public static IGenericClient getClient() throws URISyntaxException {
+
+        String username = Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_PARENT_SERVER_USERNAME);
+        String password = Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_PARENT_SERVER_PASSWORD);
+        URI uri = new URI(FhirClient.url);
+        //URI uri = new URI(url + "/ws/fhir2/R4");
+
+        String auth = username + ":" + password;
+        String base64Creds = Base64.getEncoder().encodeToString(auth.getBytes());
+
+        IGenericClient client = CTX.newRestfulGenericClient(uri.toString());
+        AdditionalRequestHeadersInterceptor interceptor = new AdditionalRequestHeadersInterceptor();
+        // interceptor.addHeaderValue("Authorization", "Basic " + base64Creds);
+        interceptor.addHeaderValue("Authorization", "Custom test");
+        client.registerInterceptor(interceptor);
+
+        return client;
+    }
+
+    public static IGenericClient getMPIClient() throws URISyntaxException {
+
+        String bearer = getToken();
+
+        System.out.println("bearer: " + bearer);
+
+        URI uri = new URI(url);
+
+        //		FhirContext ctx = FhirContext.forR4();
+        //		// Set how long to try and establish the initial TCP connection (in ms)
+        //		ctx.getRestfulClientFactory().setConnectTimeout(20 * 1000);
+        //		// Set how long to block for individual read/write operations (in ms)
+        //		ctx.getRestfulClientFactory().setSocketTimeout(20 * 1000);
+        //		// Create the client
+        //		IGenericClient client = ctx.newRestfulGenericClient(url);
+        IGenericClient client = CTX.newRestfulGenericClient(uri.toString());
+        AdditionalRequestHeadersInterceptor interceptor = new AdditionalRequestHeadersInterceptor();
+        interceptor.addHeaderValue("Authorization", "Bearer " + bearer);
+        client.registerInterceptor(interceptor);
+
+        return client;
+    }
+
+    private static class RequestProperty {
+
+        private final String key;
+
+        private final String value;
+
+        public RequestProperty(String key, String value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
+    public static String sendRequest(String path, String method, List<RequestProperty> requestProperties) {
+
+        try {
+
+            String line;
+            BufferedReader reader;
+            StringBuilder responseContent = new StringBuilder();
+
+            URL urlPath = new URL(FhirClient.url + path);
+            HttpURLConnection conn = (HttpURLConnection) urlPath.openConnection();
+            conn.setRequestProperty("Accept", "*/*");
+            conn.setConnectTimeout(5000);// 5 seconds
+            conn.setReadTimeout(5000);
+            conn.setRequestMethod(method);
+            for (RequestProperty property : requestProperties) {
+                conn.setRequestProperty(property.getKey(), property.getValue());
+            }
+
+            int status = conn.getResponseCode();
+
+            if (status >= 300) {
+                reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+                while ((line = reader.readLine()) != null) {
+                    responseContent.append(line);
+                }
+            } else {
+                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                while ((line = reader.readLine()) != null) {
+                    responseContent.append(line);
+                }
+            }
+            reader.close();
+            return responseContent.toString().trim();
+
+        } catch (Exception exc) {
+            System.err.println("Failed to get Submit request");
+            exc.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String getToken() {
+
+        List<RequestProperty> requestProperties = new ArrayList<>();
+        requestProperties.add(new RequestProperty("client_id", FhirClient.clientId));
+        requestProperties.add(new RequestProperty("client_secret", FhirClient.clientSecret));
+        requestProperties.add(new RequestProperty("grant_type", "client_credentials"));
+
+        String response = sendRequest("/auth", "POST", requestProperties);
+
+        JSONObject root = new JSONObject(response);
+        return root.getString("access_token");
+    }
+
+    public static org.openmrs.Patient getPatient(String healthId) {
+
+        List<RequestProperty> requestProperties = new ArrayList<>();
+        requestProperties.add(new RequestProperty("Authorization", "Bearer " + getToken()));
+
+        String response = sendRequest("/Patient/" + healthId, "GET", requestProperties);
+        System.out.println("response: " + response);
+
+        JSONObject root = new JSONObject(response);
+        JSONArray entries = root.getJSONArray("entry");
+        for (int i = 0; i < entries.length(); i++) {
+
+            JSONObject entry = entries.getJSONObject(i);
+            JSONObject resource = entry.getJSONObject("resource");
+            String resourceType = resource.getString("resourceType");
+
+            if (resourceType.equals("Patient")) {
+
+                JSONArray nameArray = resource.getJSONArray("name");
+
+                org.openmrs.Patient patient = new org.openmrs.Patient();
+                patient.setGender(resource.getString("gender"));
+
+                try {
+                    patient.setBirthdate(formatter.parse(resource.getString("birthDate")));
+                } catch (Exception exc) {
+                    System.err.println("Error setting birth date");
+                }
+
+                for (int j = 0; j < nameArray.length(); j++) {
+
+                    JSONObject name = nameArray.getJSONObject(j);
+                    PersonName personName = new PersonName(name.getJSONArray("given").getString(0), null, name.getString("family"));
+                    patient.getNames().add(personName);
+                }
+
+                JSONArray identifiers = resource.getJSONArray("identifier");
+                Set<PatientIdentifier> patientIds = new HashSet<>();
+
+                for (int k = 0; k < identifiers.length(); k++) {
+
+                    JSONObject identifier = identifiers.getJSONObject(k);
+                    String system = identifier.getString("system");
+                    String value = identifier.getString("value");
+
+                    int id;
+                    switch (system) {
+
+                        case HEALTH_ID_SYSTEM:
+                            id = 7;
+                            break;
+                        case HEALTH_FACILITY_ID_SYSTEM:
+                            id = 3;
+                            break;
+                        case NATIONAL_ID_SYSTEM:
+                            id = 6;
+                            break;
+                        default:
+                            id = 3;
+                            break;
+                    }
+
+                    patientIds.add(new PatientIdentifier(
+                            value,
+                            Context.getPatientService().getPatientIdentifierType(id),
+                            Context.getLocationService().getDefaultLocation()));
+                }
+                patient.setIdentifiers(patientIds);
+                return patient;
+            }
+        }
+        return null;
+    }
+
+    public static String sendFhirRequest(Resource resource) {
+
+        try {
+
+            String bearer = getToken();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", "Bearer " + bearer);
+            headers.add("Content-Type", "application/json");
+
+            HttpEntity<String> request;
+            if (resource != null && !resource.isEmpty()) {
+                request = new HttpEntity<>(CTX.newJsonParser().encodeResourceToString(resource), headers);
+            } else {
+                request = new HttpEntity<>(headers);
+            }
+
+            URI urlPath = new URI(FhirClient.url + "/Patient");
+            System.out.println("URL: " + urlPath);
+            System.out.println("URL: " + urlPath.getPath());
+            ResponseEntity<String> response = new RestTemplate().postForEntity(urlPath, request, String.class);
+
+            return response.getBody().trim();
+
+        } catch (Exception exc) {
+            System.err.println("Failed to get Token");
+            exc.printStackTrace();
+        }
+        return null;
+    }
+
+    public static List<PatientIdentifier> postPatient(Patient newPatient) {
 
         List<PatientIdentifier> patientIds = new ArrayList<>();
 
         try {
 
-            String url = Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_MPI_SERVER_URL);
-            String clientId = Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_MPI_CLIENT_ID);
-            String clientSecret = Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_MPI_CLIENT_SECRET);
+            String response = sendFhirRequest(newPatient);
 
-            String bearer = getToken(url, clientId, clientSecret);
-            String patient = CTX.newJsonParser().encodeResourceToString(newPatient);
-            URI urlPath = new URI(Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_MPI_SERVER_URL) + "/Patient");
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Authorization", "Bearer " + bearer);
-            headers.add("Content-Type", "application/json");
-
-            HttpEntity<String> request = new HttpEntity<>(patient, headers);
-            ResponseEntity<String> response = new RestTemplate().postForEntity(urlPath, request, String.class);
-
-            JSONObject root = new JSONObject(response.getBody().trim());
+            JSONObject root = new JSONObject(response);
             JSONArray identifiers = root.getJSONArray("identifier");
 
             for (int i = 0; i < identifiers.length(); i++) {
@@ -189,84 +313,82 @@ public class FhirClient {
                             Context.getLocationService().getDefaultLocation()));
                 }
             }
-
         } catch (Exception exc) {
             System.err.println("Failed to get Token");
             exc.printStackTrace();
         }
-        System.out.println(patientIds);
         return patientIds;
     }
-	
-	public static String postFhirResource(Resource resource) throws Exception {
-		
-		return getClient().create().resource(resource).prettyPrint().encodedJson().execute().getOperationOutcome()
-		        .toString();
-	}
-	
-	public static String postMPIRequest(Resource resource) throws Exception {
-		
-		System.out.println("Sending...");
-		
-		return getMPIClient().create().resource(resource).prettyPrint().encodedJson().execute().getOperationOutcome()
-		        .toString();
-	}
-	
-	public static Bundle fetchFhirTasks() throws URISyntaxException {
-		
-		return getClient().search().forResource(Task.class).returnBundle(Bundle.class).execute();
-	}
-	
-	public static Bundle fetchFhirTasksThatAreCompleted() throws URISyntaxException {
-		
-		return getClient().search().forResource(Task.class)
-		        .where(Task.STATUS.exactly().codes(Task.TaskStatus.COMPLETED.toCode()))
-		        .and(Task.IDENTIFIER.hasSystemWithAnyCode(OHRI_ENCOUNTER_SYSTEM)).returnBundle(Bundle.class).execute();
-	}
-	
-	public static Bundle fetchFhirTasksThatAreRejected() throws URISyntaxException {
-		
-		return getClient().search().forResource(Task.class)
-		        .where(Task.STATUS.exactly().codes(Task.TaskStatus.REJECTED.toCode()))
-		        .and(Task.IDENTIFIER.hasSystemWithAnyCode(OHRI_ENCOUNTER_SYSTEM)).returnBundle(Bundle.class).execute();
-	}
-	
-	public static DiagnosticReport fetchFhirDiagnosticReport(String diagnosticReportId) throws URISyntaxException {
-		
-		return getClient().read().resource(DiagnosticReport.class).withId(diagnosticReportId).execute();
-	}
-	
-	public static Observation fetchFhirObservation(String observationId) throws URISyntaxException {
-		
-		return getClient().read().resource(Observation.class).withId(observationId).execute();
-	}
-	
-	public static Bundle fetchFhirObservationsWithVlResult() throws URISyntaxException {
-		
-		return getClient().search().forResource(Observation.class).where(Task.CODE.exactly().code(FHIR_OBS_VL_RESULT))
-		        .returnBundle(Bundle.class).execute();
-		//.where(DiagnosticReport.hasChainedProperty)
-	}
-	
-	public static Bundle fetchFhirDiagnosticReports2(String... diagnosticReportIds) throws URISyntaxException {
-		
-		return getClient().search().forResource(DiagnosticReport.class)
-		        .where(DiagnosticReport.RESULT.hasAnyOfIds(diagnosticReportIds))//pass ids - {114343, 233444}
-		        .returnBundle(Bundle.class).execute();
-	}
-	
-	public static Bundle fetchFhirObservations() throws URISyntaxException {
-		
-		return getClient().search().forResource(Observation.class).returnBundle(Bundle.class).execute();
-	}
-	
-	public static Bundle fetchFhirPatients() throws URISyntaxException {
-		
-		return getClient().search().forResource(Patient.class).returnBundle(Bundle.class).execute();
-	}
-	
-	public static Bundle fetchFhirPatients(Bundle bundle) throws URISyntaxException {
-		
-		return getClient().loadPage().next(bundle).execute();
-	}
+
+    public static String postFhirResource(Resource resource) throws Exception {
+
+        return getClient().create().resource(resource).prettyPrint().encodedJson().execute().getOperationOutcome()
+                .toString();
+    }
+
+    public static String postMPIRequest(Resource resource) throws Exception {
+
+        System.out.println("Sending...");
+
+        return getMPIClient().create().resource(resource).prettyPrint().encodedJson().execute().getOperationOutcome()
+                .toString();
+    }
+
+    public static Bundle fetchFhirTasks() throws URISyntaxException {
+
+        return getClient().search().forResource(Task.class).returnBundle(Bundle.class).execute();
+    }
+
+    public static Bundle fetchFhirTasksThatAreCompleted() throws URISyntaxException {
+
+        return getClient().search().forResource(Task.class)
+                .where(Task.STATUS.exactly().codes(Task.TaskStatus.COMPLETED.toCode()))
+                .and(Task.IDENTIFIER.hasSystemWithAnyCode(OHRI_ENCOUNTER_SYSTEM)).returnBundle(Bundle.class).execute();
+    }
+
+    public static Bundle fetchFhirTasksThatAreRejected() throws URISyntaxException {
+
+        return getClient().search().forResource(Task.class)
+                .where(Task.STATUS.exactly().codes(Task.TaskStatus.REJECTED.toCode()))
+                .and(Task.IDENTIFIER.hasSystemWithAnyCode(OHRI_ENCOUNTER_SYSTEM)).returnBundle(Bundle.class).execute();
+    }
+
+    public static DiagnosticReport fetchFhirDiagnosticReport(String diagnosticReportId) throws URISyntaxException {
+
+        return getClient().read().resource(DiagnosticReport.class).withId(diagnosticReportId).execute();
+    }
+
+    public static Observation fetchFhirObservation(String observationId) throws URISyntaxException {
+
+        return getClient().read().resource(Observation.class).withId(observationId).execute();
+    }
+
+    public static Bundle fetchFhirObservationsWithVlResult() throws URISyntaxException {
+
+        return getClient().search().forResource(Observation.class).where(Task.CODE.exactly().code(FHIR_OBS_VL_RESULT))
+                .returnBundle(Bundle.class).execute();
+        //.where(DiagnosticReport.hasChainedProperty)
+    }
+
+    public static Bundle fetchFhirDiagnosticReports2(String... diagnosticReportIds) throws URISyntaxException {
+
+        return getClient().search().forResource(DiagnosticReport.class)
+                .where(DiagnosticReport.RESULT.hasAnyOfIds(diagnosticReportIds))//pass ids - {114343, 233444}
+                .returnBundle(Bundle.class).execute();
+    }
+
+    public static Bundle fetchFhirObservations() throws URISyntaxException {
+
+        return getClient().search().forResource(Observation.class).returnBundle(Bundle.class).execute();
+    }
+
+    public static Bundle fetchFhirPatients() throws URISyntaxException {
+
+        return getClient().search().forResource(Patient.class).returnBundle(Bundle.class).execute();
+    }
+
+    public static Bundle fetchFhirPatients(Bundle bundle) throws URISyntaxException {
+
+        return getClient().loadPage().next(bundle).execute();
+    }
 }
