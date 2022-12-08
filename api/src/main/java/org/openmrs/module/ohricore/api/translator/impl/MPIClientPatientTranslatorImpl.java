@@ -23,7 +23,7 @@ import org.openmrs.module.fhir2.api.translators.PatientIdentifierTranslator;
 import org.openmrs.module.fhir2.api.translators.PersonAddressTranslator;
 import org.openmrs.module.fhir2.api.translators.PersonNameTranslator;
 import org.openmrs.module.fhir2.api.translators.TelecomTranslator;
-import org.openmrs.module.ohricore.api.MPIClientPatient;
+import org.openmrs.module.ohricore.api.model.MPIClientPatient;
 import org.openmrs.module.ohricore.api.translator.MPIClientPatientTranslator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,7 +38,8 @@ import static org.apache.commons.lang3.Validate.notNull;
 import java.util.Date;
 
 /**
- * @author smallGod date: 08/12/2022
+ * @author smallGod
+ * @date 08/12/2022
  */
 @Component
 public class MPIClientPatientTranslatorImpl implements MPIClientPatientTranslator {

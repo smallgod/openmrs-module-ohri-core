@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.DiagnosticReport;
+import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Resource;
@@ -14,14 +15,16 @@ import org.hl7.fhir.r4.model.Task;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openmrs.PatientIdentifier;
-import org.openmrs.Person;
 import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir2.providers.r4.PatientFhirResourceProvider;
+import org.openmrs.module.fhir2.api.translators.PatientTranslator;
 import org.openmrs.module.ohricore.OhriCoreConstant;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
@@ -33,7 +36,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -188,6 +190,82 @@ public class FhirClient {
         return root.getString("access_token");
     }
 	
+	//    public static org.openmrs.Patient getPatient(String healthId) {
+	//
+	//        List<RequestProperty> requestProperties = new ArrayList<>();
+	//        requestProperties.add(new RequestProperty("Authorization", "Bearer " + getToken()));
+	//
+	//        String response = sendRequest("/Patient/" + healthId, "GET", requestProperties);
+	//        System.out.println("response: " + response);
+	//
+	//        Patient fhirPatient = convertFhirPatientResource(response);
+	//
+	//        JSONObject root = new JSONObject(response);
+	//        JSONArray entries = root.getJSONArray("entry");
+	//        for (int i = 0; i < entries.length(); i++) {
+	//
+	//            JSONObject entry = entries.getJSONObject(i);
+	//            JSONObject resource = entry.getJSONObject("resource");
+	//            String resourceType = resource.getString("resourceType");
+	//
+	//            if (resourceType.equals("Patient")) {
+	//
+	//                JSONArray nameArray = resource.getJSONArray("name");
+	//
+	//                org.openmrs.Patient patient = new org.openmrs.Patient();
+	//                patient.setGender(resource.getString("gender"));
+	//
+	//                try {
+	//                    patient.setBirthdate(formatter.parse(resource.getString("birthDate")));
+	//                } catch (Exception exc) {
+	//                    System.err.println("Error setting birth date");
+	//                }
+	//
+	//                for (int j = 0; j < nameArray.length(); j++) {
+	//
+	//                    JSONObject name = nameArray.getJSONObject(j);
+	//                    PersonName personName = new PersonName(name.getJSONArray("given").getString(0), null, name.getString("family"));
+	//                    patient.getNames().add(personName);
+	//                }
+	//
+	//                JSONArray identifiers = resource.getJSONArray("identifier");
+	//                Set<PatientIdentifier> patientIds = new HashSet<>();
+	//
+	//                for (int k = 0; k < identifiers.length(); k++) {
+	//
+	//                    JSONObject identifier = identifiers.getJSONObject(k);
+	//                    String system = identifier.getString("system");
+	//                    String value = identifier.getString("value");
+	//
+	//                    int id;
+	//                    switch (system) {
+	//
+	//                        case HEALTH_ID_SYSTEM:
+	//                            id = 7;
+	//                            break;
+	//                        case HEALTH_FACILITY_ID_SYSTEM:
+	//                            id = 3;
+	//                            break;
+	//                        case NATIONAL_ID_SYSTEM:
+	//                            id = 6;
+	//                            break;
+	//                        default:
+	//                            id = 3;
+	//                            break;
+	//                    }
+	//
+	//                    patientIds.add(new PatientIdentifier(
+	//                            value,
+	//                            Context.getPatientService().getPatientIdentifierType(id),
+	//                            Context.getLocationService().getDefaultLocation()));
+	//                }
+	//                patient.setIdentifiers(patientIds);
+	//                return patient;
+	//            }
+	//        }
+	//        return null;
+	//    }
+	
 	public static org.openmrs.Patient getPatient(String healthId) {
 
         List<RequestProperty> requestProperties = new ArrayList<>();
@@ -203,8 +281,6 @@ public class FhirClient {
             JSONObject entry = entries.getJSONObject(i);
             JSONObject resource = entry.getJSONObject("resource");
             String resourceType = resource.getString("resourceType");
-
-			PatientFhirResourceProvider hh;
 
             if (resourceType.equals("Patient")) {
 
@@ -264,6 +340,18 @@ public class FhirClient {
         return null;
     }
 	
+	public static Bundle convertFhirBundleResource(String jsonFhirResource) {
+		return (Bundle) CTX.newJsonParser().parseResource(jsonFhirResource);
+	}
+	
+	public static Patient convertFhirPatientResource(String jsonFhirResource) {
+		return (Patient) CTX.newJsonParser().parseResource(jsonFhirResource);
+	}
+	
+	public static String convertFhirResource(Resource fhirResource) {
+		return CTX.newJsonParser().encodeResourceToString(fhirResource);
+	}
+	
 	public static String sendFhirRequest(Resource resource) {
 
         try {
@@ -275,7 +363,7 @@ public class FhirClient {
 
             HttpEntity<String> request;
             if (resource != null && !resource.isEmpty()) {
-                request = new HttpEntity<>(CTX.newJsonParser().encodeResourceToString(resource), headers);
+                request = new HttpEntity<>(convertFhirResource(resource), headers);
             } else {
                 request = new HttpEntity<>(headers);
             }
@@ -297,22 +385,17 @@ public class FhirClient {
 	public static List<PatientIdentifier> postPatient(Patient newPatient) {
 
         List<PatientIdentifier> patientIds = new ArrayList<>();
-
         try {
 
             String response = sendFhirRequest(newPatient);
+            Patient patient = convertFhirPatientResource(response);
 
-            JSONObject root = new JSONObject(response);
-            JSONArray identifiers = root.getJSONArray("identifier");
+            List<Identifier> identifiers = patient.getIdentifier();
+            for (Identifier identifier : identifiers) {
 
-            for (int i = 0; i < identifiers.length(); i++) {
-
-                JSONObject identifier = identifiers.getJSONObject(i);
-                String system = identifier.getString("system");
-
-                if (system.equalsIgnoreCase(HEALTH_ID_SYSTEM)) {
+                if (identifier.getSystem().equalsIgnoreCase(HEALTH_ID_SYSTEM)) {
                     patientIds.add(new PatientIdentifier(
-                            identifier.getString("value"),
+                            identifier.getValue(),
                             Context.getPatientService().getPatientIdentifierType(7),
                             Context.getLocationService().getDefaultLocation()));
                 }
@@ -323,6 +406,36 @@ public class FhirClient {
         }
         return patientIds;
     }
+	
+	//    public static List<PatientIdentifier> postPatient(Patient newPatient) {
+	//
+	//        List<PatientIdentifier> patientIds = new ArrayList<>();
+	//
+	//        try {
+	//
+	//            String response = sendFhirRequest(newPatient);
+	//
+	//            JSONObject root = new JSONObject(response);
+	//            JSONArray identifiers = root.getJSONArray("identifier");
+	//
+	//            for (int i = 0; i < identifiers.length(); i++) {
+	//
+	//                JSONObject identifier = identifiers.getJSONObject(i);
+	//                String system = identifier.getString("system");
+	//
+	//                if (system.equalsIgnoreCase(HEALTH_ID_SYSTEM)) {
+	//                    patientIds.add(new PatientIdentifier(
+	//                            identifier.getString("value"),
+	//                            Context.getPatientService().getPatientIdentifierType(7),
+	//                            Context.getLocationService().getDefaultLocation()));
+	//                }
+	//            }
+	//        } catch (Exception exc) {
+	//            System.err.println("Failed to get Token");
+	//            exc.printStackTrace();
+	//        }
+	//        return patientIds;
+	//    }
 	
 	public static String postFhirResource(Resource resource) throws Exception {
 		
@@ -395,4 +508,27 @@ public class FhirClient {
 		
 		return getClient().loadPage().next(bundle).execute();
 	}
+	
 }
+
+/*
+
+
+    //		FhirContext ctx = FhirContext.forR4();
+    //		// Set how long to try and establish the initial TCP connection (in ms)
+    //		ctx.getRestfulClientFactory().setConnectTimeout(20 * 1000);
+    //		// Set how long to block for individual read/write operations (in ms)
+    //		ctx.getRestfulClientFactory().setSocketTimeout(20 * 1000);
+    //		// Create the client
+    //		IGenericClient client = ctx.newRestfulGenericClient(url);
+
+
+
+    String username = Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_PARENT_SERVER_USERNAME);
+    String password = Context.getAdministrationService().getGlobalProperty(OhriCoreConstant.GP_PARENT_SERVER_PASSWORD);
+    String auth = username + ":" + password;
+    String base64Creds = Base64.getEncoder().encodeToString(auth.getBytes());
+    interceptor.addHeaderValue("Authorization", "Basic " + base64Creds);
+
+
+ */

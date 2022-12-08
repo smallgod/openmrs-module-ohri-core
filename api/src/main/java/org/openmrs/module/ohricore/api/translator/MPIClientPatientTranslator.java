@@ -2,7 +2,7 @@ package org.openmrs.module.ohricore.api.translator;
 
 import org.hl7.fhir.r4.model.Patient;
 import org.openmrs.module.fhir2.api.translators.OpenmrsFhirUpdatableTranslator;
-import org.openmrs.module.ohricore.api.MPIClientPatient;
+import org.openmrs.module.ohricore.api.model.MPIClientPatient;
 
 import javax.annotation.Nonnull;
 
