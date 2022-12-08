@@ -30,8 +30,6 @@ public class MPIClientServiceImpl extends BaseFhirService<MPIClientPatient, org.
 	
 	@Override
 	public MPIClientPatient getByHealthId(@Nonnull String healthId) {
-		System.out.println("getByHealthId(" + healthId + ")");
-		
 		org.openmrs.Patient patient = FhirClient.getPatient(healthId);
 		return getTranslator().toFhirResource(patient);
 	}

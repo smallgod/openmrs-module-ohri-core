@@ -13,8 +13,10 @@ import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.Task;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.openmrs.Address;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.Person;
+import org.openmrs.PersonAddress;
 import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir2.providers.r4.PatientFhirResourceProvider;
@@ -33,6 +35,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -204,8 +207,6 @@ public class FhirClient {
             JSONObject resource = entry.getJSONObject("resource");
             String resourceType = resource.getString("resourceType");
 
-			PatientFhirResourceProvider hh;
-
             if (resourceType.equals("Patient")) {
 
                 JSONArray nameArray = resource.getJSONArray("name");
@@ -220,11 +221,21 @@ public class FhirClient {
                 }
 
                 for (int j = 0; j < nameArray.length(); j++) {
-
                     JSONObject name = nameArray.getJSONObject(j);
                     PersonName personName = new PersonName(name.getJSONArray("given").getString(0), null, name.getString("family"));
                     patient.getNames().add(personName);
                 }
+
+                JSONObject address = resource.getJSONArray("address").getJSONObject(0);
+                PersonAddress personAddress = new PersonAddress();
+                personAddress.setCountyDistrict(address.getString("district"));
+                personAddress.setStateProvince(address.getString("state"));
+                personAddress.setPostalCode(address.getString("postalCode"));
+                personAddress.setCountry(address.getString("country"));
+
+                Set<PersonAddress> addresses = new HashSet<>();
+                addresses.add(personAddress);
+                patient.setAddresses(addresses);
 
                 JSONArray identifiers = resource.getJSONArray("identifier");
                 Set<PatientIdentifier> patientIds = new HashSet<>();

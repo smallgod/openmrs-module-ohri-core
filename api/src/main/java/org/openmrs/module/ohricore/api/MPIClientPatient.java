@@ -7,5 +7,5 @@ import org.hl7.fhir.r4.model.Patient;
  * @author smallGod
  */
 
-@ResourceDef(name = "MPIPatient", profile = "http://hl7.org/fhir/StructureDefinition/MPIPatient")
+@ResourceDef(name = "MPIPatient", profile = "http://hl7.org/fhir/StructureDefinition/Patient")
 public class MPIClientPatient extends Patient {}
