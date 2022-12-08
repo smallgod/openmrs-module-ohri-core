@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 /**
  * @author smallGod
  */
-public interface MPIClientService extends FhirService<Patient> {
+public interface MPIClientService extends FhirService<MPIClientPatient> {
 	
-	Patient getByHealthId(@Nonnull String healthId);
+	MPIClientPatient getByHealthId(@Nonnull String healthId);
 }

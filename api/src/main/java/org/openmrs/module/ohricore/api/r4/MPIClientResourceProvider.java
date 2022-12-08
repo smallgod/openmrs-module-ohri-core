@@ -8,6 +8,7 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Patient;
 import org.openmrs.module.fhir2.api.annotations.R4Provider;
+import org.openmrs.module.ohricore.api.MPIClientPatient;
 import org.openmrs.module.ohricore.api.MPIClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,14 +28,14 @@ public class MPIClientResourceProvider implements IResourceProvider {
 	
 	@Override
 	public Class<? extends IBaseResource> getResourceType() {
-		return Patient.class;
+		return MPIClientPatient.class;
 	}
 	
 	@Read
 	@SuppressWarnings("unused")
-	public Patient getByHealthId(@IdParam @Nonnull IdType healthId) {
+	public MPIClientPatient getByHealthId(@IdParam @Nonnull IdType healthId) {
 		
-		Patient patient = mpiClientService.getByHealthId(healthId.getIdPart());
+		MPIClientPatient patient = mpiClientService.getByHealthId(healthId.getIdPart());
 		if (patient == null) {
 			throw new ResourceNotFoundException("Could not find patient with Health ID: " + healthId);
 		}
