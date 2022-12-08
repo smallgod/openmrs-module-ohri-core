@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ohricore.api.ExternalPatientSearchService;
-import org.openmrs.module.ohricore.model.ExternalPatient;
+import org.openmrs.module.ohricore.api.model.ExternalPatient;
 import org.openmrs.module.ohricore.web.controller.ExternalPatientsSearchController;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;

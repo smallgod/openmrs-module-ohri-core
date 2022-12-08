@@ -1,10 +1,9 @@
 package org.openmrs.module.ohricore.api;
 
-import org.openmrs.Patient;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
-import org.openmrs.module.ohricore.model.ExternalPatient;
+import org.openmrs.module.ohricore.api.model.ExternalPatient;
 import org.openmrs.util.PrivilegeConstants;
 
 /**

@@ -1,29 +1,18 @@
-package org.openmrs.module.ohricore.model;
+package org.openmrs.module.ohricore.api.model;
 
-import org.openmrs.BaseOpenmrsMetadata;
+import org.hl7.fhir.r4.model.Patient;
 
 /**
  * @author smallGod date: 07/12/2022
  */
-public class ExternalPatient extends BaseOpenmrsMetadata {
-	
-	private Integer id;
+public class ExternalPatient extends Patient {
 	
 	private String familyName;
 	
 	private String givenName;
 	
 	public ExternalPatient() {
-	}
-	
-	@Override
-	public Integer getId() {
-		return id;
-	}
-	
-	@Override
-	public void setId(Integer id) {
-		this.id = id;
+		super();
 	}
 	
 	public String getFamilyName() {

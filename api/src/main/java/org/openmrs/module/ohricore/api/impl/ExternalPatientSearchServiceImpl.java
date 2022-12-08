@@ -4,8 +4,8 @@ import org.openmrs.Patient;
 import org.openmrs.api.APIException;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.ohricore.api.ExternalPatientSearchService;
+import org.openmrs.module.ohricore.api.model.ExternalPatient;
 import org.openmrs.module.ohricore.fhir.FhirClient;
-import org.openmrs.module.ohricore.model.ExternalPatient;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -23,7 +23,6 @@ public class ExternalPatientSearchServiceImpl extends BaseOpenmrsService impleme
 			ExternalPatient extPatient = new ExternalPatient();
 			extPatient.setFamilyName(patient.getFamilyName());
 			extPatient.setGivenName(patient.getGivenName());
-			extPatient.setName(patient.getGivenName() + " " + patient.getFamilyName());
 			
 			return extPatient;
 		}
