@@ -3,6 +3,7 @@ package org.openmrs.module.ohricore.fhir;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.AdditionalRequestHeadersInterceptor;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.hl7.fhir.r4.model.Bundle;
@@ -12,6 +13,7 @@ import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.Task;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.openmrs.Address;
 import org.openmrs.PatientIdentifier;
@@ -200,6 +202,11 @@ public class FhirClient {
         System.out.println("response: " + response);
 
         JSONObject root = new JSONObject(response);
+        Integer totalRecords = root.getInt("total");
+        if (totalRecords == null || totalRecords < 1) {
+            throw new ResourceNotFoundException("Could not find patient with Health ID: " + healthId);
+        }
+
         JSONArray entries = root.getJSONArray("entry");
         for (int i = 0; i < entries.length(); i++) {
 
@@ -210,9 +217,18 @@ public class FhirClient {
             if (resourceType.equals("Patient")) {
 
                 JSONArray nameArray = resource.getJSONArray("name");
-
                 org.openmrs.Patient patient = new org.openmrs.Patient();
-                patient.setGender(resource.getString("gender"));
+
+                String gender = resource.getString("gender");
+                String patientGender = null;
+                if (gender != null) {
+                    if (gender.equalsIgnoreCase("female")) {
+                        patientGender = "F";
+                    } else if (gender.equalsIgnoreCase("male")) {
+                        patientGender = "M";
+                    }
+                }
+                patient.setGender(patientGender);
 
                 try {
                     patient.setBirthdate(formatter.parse(resource.getString("birthDate")));
@@ -226,16 +242,65 @@ public class FhirClient {
                     patient.getNames().add(personName);
                 }
 
-                JSONObject address = resource.getJSONArray("address").getJSONObject(0);
-                PersonAddress personAddress = new PersonAddress();
-                personAddress.setCountyDistrict(address.getString("district"));
-                personAddress.setStateProvince(address.getString("state"));
-                personAddress.setPostalCode(address.getString("postalCode"));
-                personAddress.setCountry(address.getString("country"));
+                JSONArray addresses = null;
 
-                Set<PersonAddress> addresses = new HashSet<>();
-                addresses.add(personAddress);
-                patient.setAddresses(addresses);
+                try {
+                    addresses = resource.getJSONArray("address");
+                } catch (JSONException exc) {
+                    System.err.println("Address is null");
+                }
+
+                if (addresses != null) {
+
+                    JSONObject address = addresses.getJSONObject(0);
+                    PersonAddress personAddress = new PersonAddress();
+
+                    if (address != null) {
+
+                        String district = null;
+                        String state = null;
+                        String postalCode = null;
+                        String country = null;
+
+                        try {
+                            district = address.getString("district");
+                        } catch (JSONException exc) {
+                            System.err.println("District is null");
+                        }
+                        try {
+                            state = address.getString("state");
+                        } catch (JSONException exc) {
+                            System.err.println("State is null");
+                        }
+                        try {
+                            postalCode = address.getString("postalCode");
+                        } catch (JSONException exc) {
+                            System.err.println("PostalCode is null");
+                        }
+                        try {
+                            country = address.getString("country");
+                        } catch (JSONException exc) {
+                            System.err.println("Country is null");
+                        }
+
+                        if (district != null) {
+                            personAddress.setCountyDistrict(district);
+                        }
+                        if (state != null) {
+                            personAddress.setStateProvince(state);
+                        }
+                        if (postalCode != null) {
+                            personAddress.setPostalCode(postalCode);
+                        }
+                        if (country != null) {
+                            personAddress.setCountry(country);
+                        }
+                    }
+
+                    Set<PersonAddress> personAddresses = new HashSet<>();
+                    personAddresses.add(personAddress);
+                    patient.setAddresses(personAddresses);
+                }
 
                 JSONArray identifiers = resource.getJSONArray("identifier");
                 Set<PatientIdentifier> patientIds = new HashSet<>();

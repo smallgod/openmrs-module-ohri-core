@@ -27,10 +27,10 @@ import java.util.Set;
  * @author smallGod date: 30/11/2022
  */
 public class PatientInterceptorAdvice implements AfterReturningAdvice {
-	
-	private static final Logger log = LoggerFactory.getLogger(PatientInterceptorAdvice.class);
-	
-	@Override
+
+    private static final Logger log = LoggerFactory.getLogger(PatientInterceptorAdvice.class);
+
+    @Override
     public void afterReturning(Object returnValue, Method methodInvoked, Object[] methodArgs, Object target)
             throws Throwable {
 
@@ -48,11 +48,12 @@ public class PatientInterceptorAdvice implements AfterReturningAdvice {
 
                         Enumerations.AdministrativeGender patientGender;
                         String gender = patient.getGender();
+                        System.out.println("Patient gender: " + gender);
                         switch (gender) {
-                            case "male":
+                            case "M":
                                 patientGender = Enumerations.AdministrativeGender.MALE;
                                 break;
-                            case "female":
+                            case "F":
                                 patientGender = Enumerations.AdministrativeGender.FEMALE;
                                 break;
                             default:

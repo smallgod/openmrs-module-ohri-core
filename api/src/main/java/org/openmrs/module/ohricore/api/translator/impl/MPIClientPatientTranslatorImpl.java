@@ -153,16 +153,16 @@ public class MPIClientPatientTranslatorImpl implements MPIClientPatientTranslato
                 patient.getDeceasedBooleanType();
 
                 currentPatient.setDead(patient.getDeceasedBooleanType().booleanValue());
+            } catch (FHIRException ignored) {
             }
-            catch (FHIRException ignored) {}
 
             try {
                 patient.getDeceasedDateTimeType();
 
                 currentPatient.setDead(true);
                 currentPatient.setDeathDate(patient.getDeceasedDateTimeType().getValue());
+            } catch (FHIRException ignored) {
             }
-            catch (FHIRException ignored) {}
         }
 
         for (Address address : patient.getAddress()) {
@@ -208,7 +208,7 @@ public class MPIClientPatientTranslatorImpl implements MPIClientPatientTranslato
 		this.telecomTranslator = telecomTranslator;
 	}
 	
-	//TODO: This piece of code is already defined in teh fhir2 module
+	// TODO: This piece of code is already defined in the fhir2 module
 	// Remove it from here
 	public static Date getLastUpdated(OpenmrsObject object) {
 		if (object instanceof Auditable) {
