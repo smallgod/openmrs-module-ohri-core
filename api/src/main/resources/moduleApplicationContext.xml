@@ -30,23 +30,4 @@
     <bean id="encounterInterceptor" class="org.openmrs.module.ohricore.aop.EncounterInterceptorAdvice"/>
     <bean id="patientInterceptor" class="org.openmrs.module.ohricore.aop.PatientInterceptorAdvice"/>
 
-    <bean id="externalPatientService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-        <property name="transactionManager" ref="transactionManager"/>
-        <property name="preInterceptors" ref="serviceInterceptors"/>
-        <property name="transactionAttributeSource" ref="transactionAttributeSource"/>
-        <property name="target">
-            <bean class="org.openmrs.module.ohricore.api.impl.ExternalPatientSearchServiceImpl">
-            </bean>
-        </property>
-    </bean>
-
-    <bean parent="serviceContext">
-        <property name="moduleService">
-            <list>
-                <value>org.openmrs.module.ohricore.api.ExternalPatientSearchService</value>
-                <ref bean="externalPatientService"/>
-            </list>
-        </property>
-    </bean>
-
 </beans>
