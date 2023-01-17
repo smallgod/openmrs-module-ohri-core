@@ -7,6 +7,8 @@ public final class OhriCoreConstant {
 	
 	public static final String MUTEX_QUERY_LABRESULTS = "QUERY LAB RESULTS MUTEX";
 	
+	public static final String MUTEX_UPDATE_LUCENE_INDEXES = "UPDATE LUCENE INDEXES MUTEX";
+	
 	public static final String FHIR_SANDBOX_URL = "https://oh-route.gicsandbox.org/fhir";
 	
 	public static final String FHIR_COMPLETED_OHRI_TASKS = "/Task?owner=Organization/101283&status=completed&_count=999";
