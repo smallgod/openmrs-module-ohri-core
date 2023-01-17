@@ -389,7 +389,7 @@ public class FhirClient {
                 if (system.equalsIgnoreCase(HEALTH_ID_SYSTEM)) {
                     patientIds.add(new PatientIdentifier(
                             identifier.getString("value"),
-                            Context.getPatientService().getPatientIdentifierType(7),
+                            Context.getPatientService().getPatientIdentifierTypeByName("Health ID"),
                             Context.getLocationService().getDefaultLocation()));
                 }
             }

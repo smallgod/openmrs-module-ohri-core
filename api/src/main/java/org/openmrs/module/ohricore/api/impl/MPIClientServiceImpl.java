@@ -18,8 +18,7 @@ import javax.annotation.Nonnull;
 
 @Component
 @Transactional
-public class MPIClientServiceImpl extends BaseFhirService<MPIClientPatient, org.openmrs.Patient>
-		implements MPIClientService {
+public class MPIClientServiceImpl extends BaseFhirService<MPIClientPatient, org.openmrs.Patient> implements MPIClientService {
 	
 	@Autowired
 	private MPIClientPatientTranslator translator;
