@@ -7,6 +7,10 @@ import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ohricore.api.OHRIComputedConcept;
 import org.openmrs.module.ohricore.engine.CommonsUUID;
+
+import org.openmrs.Encounter;
+import org.openmrs.module.ohricore.api.OHRIComputedConcept;
+
 import org.openmrs.module.ohricore.engine.ConceptComputeTrigger;
 import org.openmrs.module.ohricore.engine.OHRIComputedConceptsFactory;
 import org.slf4j.Logger;
@@ -14,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.AfterReturningAdvice;
 
 import java.lang.reflect.Method;
+
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
@@ -40,13 +45,15 @@ public class EncounterInterceptorAdvice implements AfterReturningAdvice {
 
         try {
             if (methodInvoked.getName().equals(ConceptComputeTrigger.SAVE_ENCOUNTER)) {
+
                 for (Object arg : methodArgs) {
                     if (arg instanceof Encounter) {
+
                         Encounter encounter = (Encounter) arg;
-                        List<OHRIComputedConcept> ohriComputedConcepts = OHRIComputedConceptsFactory
-                                .getComputedConcepts(encounter);
+
+                        List<OHRIComputedConcept> ohriComputedConcepts = OHRIComputedConceptsFactory.getComputedConcepts(encounter);
                         for (OHRIComputedConcept computedConcept : ohriComputedConcepts) {
-                            computedConcept.computeAndPersistObs(encounter);
+                            //computedConcept.computeAndPersistObs(encounter); //Disable computed obs here: SG - Sept.11.2022
                         }
 
                         //TODO: Re-factor this code into a separate neat file

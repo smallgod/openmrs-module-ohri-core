@@ -50,6 +50,7 @@ public interface OHRIComputedConcept {
 
         Obs computedObs = new Obs();
         computedObs.setDateCreated(new Date());
+
         computedObs.setObsDatetime(new Date());
         computedObs.setPerson(patient);
         computedObs.setConcept(getConcept());

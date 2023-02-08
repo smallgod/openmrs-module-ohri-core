@@ -30,14 +30,83 @@
     </modules>
 
     <dependencyManagement>
+
         <dependencies>
+
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>legacyui-omod</artifactId>
                 <version>${legacyUIomodVersion}</version>
                 <scope>provided</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.api</groupId>
+                <artifactId>openmrs-api</artifactId>
+                <version>${openmrsPlatformVersion}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.web</groupId>
+                <artifactId>openmrs-web</artifactId>
+                <version>${openmrsPlatformVersion}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.api</groupId>
+                <artifactId>openmrs-api</artifactId>
+                <version>${openmrsPlatformVersion}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.web</groupId>
+                <artifactId>openmrs-web</artifactId>
+                <version>${openmrsPlatformVersion}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.test</groupId>
+                <artifactId>openmrs-test</artifactId>
+                <version>${openmrsPlatformVersion}</version>
+                <type>pom</type>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>fhir2-api</artifactId>
+                <version>${fhir2Version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>fhir2-api-2.1</artifactId>
+                <version>${fhir2Version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>fhir2-api-2.2</artifactId>
+                <version>${fhir2Version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>20220924</version>
+            </dependency>
+
         </dependencies>
+
     </dependencyManagement>
 
     <dependencies>
@@ -119,14 +188,14 @@
         <repository>
             <id>openmrs-repo</id>
             <name>OpenMRS Nexus Repository</name>
-            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+            <url>https://mavenrepo.openmrs.org/public</url>
         </repository>
 
         <repository>
             <id>central</id>
             <name>Maven Repository Switchboard</name>
             <layout>default</layout>
-            <url>http://repo1.maven.org/maven2</url>
+            <url>https://repo1.maven.org/maven2</url>
         </repository>
 
     </repositories>
@@ -136,7 +205,8 @@
         <pluginRepository>
             <id>openmrs-repo</id>
             <name>OpenMRS Nexus Repository</name>
-            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+            <url>https://mavenrepo.openmrs.org/public</url>
+
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -146,22 +216,27 @@
 
     <properties>
         <openmrsPlatformVersion>2.3.3</openmrsPlatformVersion>
+        <webservicesRestVersion>2.21.0</webservicesRestVersion>
+        <fhir2Version>1.3.0</fhir2Version>
         <legacyUIomodVersion>1.8.2</legacyUIomodVersion>
         <junit5Version>5.7.2</junit5Version>
         <junit4Version>4.13.1</junit4Version>
     </properties>
 
     <distributionManagement>
+
         <repository>
             <id>openmrs-repo-modules</id>
-            <name>Modules</name>
-            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/modules/</url>
+            <name>OpenMRS Modules</name>
+            <url>https://mavenrepo.openmrs.org/modules</url>
         </repository>
+
         <snapshotRepository>
             <id>openmrs-repo-snapshots</id>
             <name>OpenMRS Snapshots</name>
-            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/snapshots</url>
+            <url>https://mavenrepo.openmrs.org/snapshots</url>
         </snapshotRepository>
+
     </distributionManagement>
 
 </project>

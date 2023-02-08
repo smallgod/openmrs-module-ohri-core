@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <module configVersion="1.2">
-	
+
 	<!-- Base Module Properties -->
 	<id>${project.parent.artifactId}</id>
 	<name>${project.parent.name}</name>
@@ -16,20 +16,43 @@
 	
 	<!-- <updateURL>https://modules.openmrs.org/modules/download/@MODULE_ID@/update.rdf</updateURL> -->
 	<!-- /Base Module Properties -->
-
+  
 	<require_version>${openmrsPlatformVersion}</require_version>
+
+	<!-- Required Privileges  -->
+	<privilege>
+		<name>Get Patients</name>
+		<description>Base privilege for all External patient operations</description>
+	</privilege>
+
+	<!-- Required Modules -->
+	<require_modules>
+		<require_module version="${fhir2Version}">${project.parent.groupId}.fhir2</require_module>
+		<require_module>org.openmrs.module.webservices.rest</require_module>
+	</require_modules>
+	<!-- / Required Modules -->
 
 	<!-- Extensions -->
 	<!--
+
 	<extension>
 		<point>org.openmrs.admin.list</point>
 		<class>org.openmrs.module.ohricore.extension.html.AdminList</class>
 	</extension>
+
 	-->
 
 	<aware_of_modules>
 		<aware_of_module>org.openmrs.module.legacyui</aware_of_module>
 	</aware_of_modules>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.fhir.sandbox.url</property>
+		<defaultValue>https://oh-route.gicsandbox.org/fhir</defaultValue>
+		<description>
+			The URL to the DISI FHIR Resources Server
+		</description>
+	</globalProperty>
 
 	<advice>
 		<point>org.openmrs.api.EncounterService</point>
@@ -37,8 +60,8 @@
 	</advice>
 
 	<advice>
-		<point>org.openmrs.api.EncounterService</point>
-		<class>org.openmrs.module.ohricore.aop.EncounterInterceptorAdvice</class>
+		<point>org.openmrs.api.PatientService</point>
+		<class>org.openmrs.module.ohricore.aop.PatientInterceptorAdvice</class>
 	</advice>
 
 <!--	<advice>-->
