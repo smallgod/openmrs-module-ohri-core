@@ -12,6 +12,7 @@ package org.openmrs.module.ohricore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.db.ContextDAO;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ohricore.task.QueryLabResultsTask;
 import org.openmrs.module.ohricore.task.UpdateLuceneIndexesTask;
