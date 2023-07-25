@@ -7,10 +7,8 @@
 	<name>${project.parent.name}</name>
 	<version>${project.parent.version}</version>
 	<package>org.openmrs.module.ohricore</package>
-	<author>smallgod</author>
-	<description>
-			${project.parent.description}
-	</description>
+	<author>Arthur D. Mugume [OHRI]</author>
+	<description>${project.parent.description}</description>
 
 	<activator>org.openmrs.module.ohricore.OHRICoreActivator</activator>
 	

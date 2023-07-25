@@ -98,7 +98,7 @@ public class FhirClient {
 	public static IGenericClient getMPIClient() throws URISyntaxException {
 		
 		String bearer = getToken();
-		
+
 		System.out.println("bearer: " + bearer);
 		
 		URI uri = new URI(url);
@@ -389,7 +389,7 @@ public class FhirClient {
                 if (system.equalsIgnoreCase(HEALTH_ID_SYSTEM)) {
                     patientIds.add(new PatientIdentifier(
                             identifier.getString("value"),
-                            Context.getPatientService().getPatientIdentifierTypeByName("Health ID"),
+                            Context.getPatientService().getPatientIdentifierTypeByName("Health ID"),//TODO: move this to global properties & use iniz to set the UUID so it is static
                             Context.getLocationService().getDefaultLocation()));
                 }
             }
