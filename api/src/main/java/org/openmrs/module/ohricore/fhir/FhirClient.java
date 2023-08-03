@@ -98,11 +98,10 @@ public class FhirClient {
 	public static IGenericClient getMPIClient() throws URISyntaxException {
 		
 		String bearer = getToken();
+		URI uri = new URI(url);
 
 		System.out.println("bearer: " + bearer);
-		
-		URI uri = new URI(url);
-		
+
 		//		FhirContext ctx = FhirContext.forR4();
 		//		// Set how long to try and establish the initial TCP connection (in ms)
 		//		ctx.getRestfulClientFactory().setConnectTimeout(20 * 1000);
