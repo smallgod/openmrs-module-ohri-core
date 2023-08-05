@@ -79,11 +79,11 @@ public final class OhriCoreConstant {
 	
 	public static final String GP_PARENT_SERVER_USERNAME = "";
 	
-	public static final String GP_MPI_SERVER_URL = "ohricore.mpi.namibia.server.url";
+	public static final String GP_MPI_SERVER_URL = "ohricore.mpi.clientregistry.server.url";
 	
-	public static final String GP_MPI_CLIENT_ID = "ohricore.mpi.namibia.server.clientid";
+	public static final String GP_MPI_CLIENT_ID = "ohricore.mpi.clientregistry.server.clientid";
 	
-	public static final String GP_MPI_CLIENT_SECRET = "ohricore.mpi.namibia.server.clientsecret";
+	public static final String GP_MPI_CLIENT_SECRET = "ohricore.mpi.clientregistry.server.clientsecret";
 	
 	public static final String CONCEPT_MAPPING_CIEL = "CIEL";
 	
