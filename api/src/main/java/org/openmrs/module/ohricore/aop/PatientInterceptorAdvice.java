@@ -27,10 +27,10 @@ import java.util.Set;
  * @author smallGod date: 30/11/2022
  */
 public class PatientInterceptorAdvice implements AfterReturningAdvice {
-
-    private static final Logger log = LoggerFactory.getLogger(PatientInterceptorAdvice.class);
-
-    @Override
+	
+	private static final Logger log = LoggerFactory.getLogger(PatientInterceptorAdvice.class);
+	
+	@Override
     public void afterReturning(Object returnValue, Method methodInvoked, Object[] methodArgs, Object target)
             throws Throwable {
 
@@ -95,18 +95,17 @@ public class PatientInterceptorAdvice implements AfterReturningAdvice {
                         newPatient.setAddress(addresses);
 
                         //String response = FhirClient.postMPIRequest(newPatient);
-                        String response = FhirClient.postFhirResource(newPatient);
-                        System.out.println("Response: " + response);
+                        //String response = FhirClient.postFhirResource(newPatient);
+                        //System.out.println("Response: " + response);
 
                         //TODO: Read response and update patient Identifiers
-                        /*
+
                         List<PatientIdentifier> newPatientIds = FhirClient.postPatient(newPatient);
 
                         for (PatientIdentifier patientId : newPatientIds) {
                             patientId.setPatient(patient);
                             Context.getPatientService().savePatientIdentifier(patientId);
                         }
-                         */
                     }
                 }
             }
